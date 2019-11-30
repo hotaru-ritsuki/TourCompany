@@ -4,11 +4,7 @@ import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode
-@AllArgsConstructor
+@Data
 public class Users {
   private Long id;
   private String firstName;

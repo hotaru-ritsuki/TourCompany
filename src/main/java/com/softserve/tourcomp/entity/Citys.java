@@ -2,11 +2,7 @@ package com.softserve.tourcomp.entity;
 
 import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode
-@AllArgsConstructor
+@Data
 public class Citys {
   private Long Id;
   private String name;

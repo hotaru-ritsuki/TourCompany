@@ -2,11 +2,7 @@ package com.softserve.tourcomp.entity;
 
 import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode
-@AllArgsConstructor
+@Data
 public class Hotels {
   private Long id;
   private String name;
