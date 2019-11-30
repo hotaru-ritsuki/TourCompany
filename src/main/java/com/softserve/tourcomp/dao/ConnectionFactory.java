@@ -15,7 +15,7 @@ public class ConnectionFactory {
   private ConnectionFactory() {
   }
 
-  public Connection getConnection()
+  public static Connection getConnection()
   {
     if(instance == null) {
       try {
