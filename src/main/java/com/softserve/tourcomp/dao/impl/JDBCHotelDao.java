@@ -22,6 +22,7 @@ public class JDBCHotelDao extends JDBCGenericDao<Hotels> implements HotelDao {
   private final String findHotelsByLowerPricePerNightQuery = "SELECT * FROM HOTELS WHERE priceNight < ? ";
   private final String findHotelsByHigherPricePerNightQuery = "SELECT * FROM HOTELS WHERE priceNight > ?";
   private final String findHotelsByNumberOfRoomsQuery = "SELECT * FROM HOTELS WHERE numberRooms = ?";
+  private final String FindByHotelNameQuery = "SELECT * FROM HOTELS WHERE name = ?";
 
   public JDBCHotelDao(Connection connection) {
     super(connection,"INSERT INTO HOTELS (name, numberRooms, id_country, id_city, priceNight, discription) VALUES (?,?,?,?,?,?)",
@@ -71,7 +72,18 @@ statement.setString(6,entity.getDiscription());
 
   @Override
   public Optional<Hotels> findHotelByName(String nameHotel) {
-    return Optional.empty();
+    Hotels entity = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(FindByHotelNameQuery)) {
+      statement.setString(1, nameHotel);
+      ResultSet result = statement.executeQuery();
+      if (result.next()) {
+        entity = extractEntity(result);
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return Optional.ofNullable(entity);
   }
 
   @Override
