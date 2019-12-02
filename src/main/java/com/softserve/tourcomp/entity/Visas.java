@@ -8,6 +8,5 @@ import java.util.List;
 public class Visas {
   private Long Id;
   private String name;
-  private Countrys country;
   private List<Users> users;
 }

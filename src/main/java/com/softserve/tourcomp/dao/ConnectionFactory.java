@@ -8,14 +8,14 @@ import java.sql.SQLException;
 public class ConnectionFactory {
   public static final String URL = "jdbc:mysql://localhost:3306/TourFirm?serverTimezone=UTC";
   public static final String USER = "root";
-  public static final String PASS = "root";
+  public static final String PASS = "Root1234";
 
   private static Connection instance;
 
   private ConnectionFactory() {
   }
 
-  public Connection getConnection()
+  public static Connection getConnection()
   {
     if(instance == null) {
       try {
