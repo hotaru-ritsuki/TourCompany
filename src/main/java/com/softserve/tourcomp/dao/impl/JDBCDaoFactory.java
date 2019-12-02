@@ -11,7 +11,7 @@ public class JDBCDaoFactory extends DaoFactory {
 
   @Override
   public BookingDao createBookingDao() {
-    return new JDBCSBookingDao(getConnection());
+    return new JDBCBookingDao(getConnection());
   }
 
   @Override
