@@ -47,7 +47,6 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
   @Override
   void setEntityValues(PreparedStatement statement, Visas entity) throws SQLException {
     statement.setString(1, entity.getName());
-    statement.setLong(2, entity.getCountry().getId());
   }
 
   @Override
@@ -93,16 +92,6 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
     deleteUsersFromVisa(id);
     return statement.executeUpdate() > 0;
   }
-
- /* @Override
-  boolean createAction(PreparedStatement statement, Visas entity) throws SQLException {
-    if (insertIntoDb(statement, entity) == 1) {
-      setId(entity, getId(entity, statement));
-      insertUsersFromVisa(entity);
-      return true;
-    }
-    return false;
-  }*/
 
   @Override
   int updateOnDb(PreparedStatement statement, Visas entity) throws SQLException {
@@ -192,16 +181,4 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
     return entities;
   }
 
-  @Override
-  public List<Visas> findVisasByCountryId(Long countryId) {
-    List<Visas> found = null;
-
-    try (PreparedStatement statement = connection.prepareStatement(findVisasByCountryIdQuery)) {
-      statement.setLong(1, countryId);
-      found = getAllFromVisasStatement(statement);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    return found;
-  }
 }

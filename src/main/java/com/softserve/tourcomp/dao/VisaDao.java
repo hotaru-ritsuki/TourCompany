@@ -12,6 +12,4 @@ public interface VisaDao extends GenericDao<Visas>{
 
   List<Visas> findVisasByEmail(String email);
 
-  List<Visas> findVisasByCountryId(Long CountryId);
-
 }
