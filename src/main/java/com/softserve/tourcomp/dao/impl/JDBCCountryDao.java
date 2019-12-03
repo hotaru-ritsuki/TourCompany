@@ -15,15 +15,15 @@ import java.util.List;
 import java.util.Optional;
 
 public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryDao {
-  private final String FindByCountryNameQuery = "SELECT * FROM COUNTRYS WHERE name = ?";
+  private final String FindByCountryNameQuery = "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON id_visa = COUNTRYS.id WHERE name = ?";
   private final String FindByCityIdQuery = "SELECT * FROM COUNTRYS LEFT JOIN CITYS ON COUNTRYS.id = CITYS.id_country WHERE CITYS.id = ?";
-  private final String findCountrysByVisaIdQuery = "";
+  private final String findCountrysByVisaIdQuery = "SELECT * FROM COUNTRYS WHERE id_visa = ?";
 
   public JDBCCountryDao(Connection connection) {
     super(connection,"INSERT INTO COUNTRYS (name, id_visa) VALUES (?, ?)",
-            "SELECT * FROM COUNTRYS WHERE id = ?",
+            "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON id_visa = VISAS.id WHERE id = ?",
             "SELECT SQL_CALC_FOUND_ROWS * FROM COUNTRYS LIMIT ?,?",
-            "SELECT * FROM COUNTRYS",
+            "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON id_visa = VISAS.id",
             "SELECT COUNT(*) FROM COUNTRYS",
             "COUNT(*)",
             "UPDATE COUNTRYS SET name = ?, id_visa = ? WHERE id = ?",

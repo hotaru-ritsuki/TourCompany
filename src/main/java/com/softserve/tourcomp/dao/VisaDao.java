@@ -9,7 +9,4 @@ import java.util.Set;
 
 public interface VisaDao extends GenericDao<Visas>{
   Optional<Visas> findById(Long visaId);
-
-  List<Visas> findVisasByEmail(String email);
-
 }

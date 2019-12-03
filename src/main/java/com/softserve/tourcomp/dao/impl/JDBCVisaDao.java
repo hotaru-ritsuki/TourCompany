@@ -16,20 +16,18 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
   private final String createUsersToVisaQuery = "INSERT INTO USERS_VISAS (id_user,id_visa) VALUES (?,?)";
   private final String deleteUsersToVisaQuery = "DELETE FROM USERS_VISAS WHERE id_visa = ?";
   private final String selectUsersToVisaQuery = "SELECT * FROM USERS_VISAS JOIN USERS ON VISAS.id_user=USERS.id WHERE id_visa = ?";
-  private final String FindByVisaIdQuery = "";
-  private final String findVisasByEmailQuery = "";
   private final String findVisasByCountryIdQuery = "";
 
 
   public JDBCVisaDao(Connection connection) {
-    super(connection, "INSERT INTO VISAS (name, id_country) VALUES (?, ?)",
+    super(connection, "INSERT INTO VISAS (name) VALUES (?)",
             "SELECT * FROM VISAS WHERE id = ?",
             "SELECT SQL_CALC_FOUND_ROWS * FROM VISAS LIMIT ?,?",
             "SELECT * FROM VISAS",
             "SELECT COUNT(*) FROM VISAS",
             "COUNT(*)",
-            "UPDATE VISAS SET name = ?, id_country = ? WHERE id= ?",
-            3,
+            "UPDATE VISAS SET name = ? WHERE id= ?",
+            2,
             "DELETE FROM VISA WHERE id = ?",
             new VisaMapper());
   }
@@ -153,19 +151,6 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
       ex.printStackTrace();
     }
     return Optional.ofNullable(entity);
-  }
-
-  @Override
-  public List<Visas> findVisasByEmail(String email) {
-    List<Visas> found = null;
-
-    try (PreparedStatement statement = connection.prepareStatement(findVisasByEmailQuery)) {
-      statement.setString(1, email);
-      found = getAllFromVisasStatement(statement);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    return found;
   }
 
   private List<Visas> getAllFromVisasStatement(PreparedStatement statement) throws SQLException {
