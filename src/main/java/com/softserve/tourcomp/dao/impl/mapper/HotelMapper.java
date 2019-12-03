@@ -1,5 +1,6 @@
 package com.softserve.tourcomp.dao.impl.mapper;
 
+import com.softserve.tourcomp.entity.Citys;
 import com.softserve.tourcomp.entity.Hotels;
 
 import java.sql.ResultSet;
@@ -11,8 +12,9 @@ public class HotelMapper implements ObjectMapper<Hotels> {
   public Hotels extractFromResultSet(ResultSet rs) throws SQLException {
     Hotels hotel=new Hotels();
     CityMapper city=new CityMapper();
-    hotel.setCity(city.extractFromResultSet(rs));
-    hotel.setCountry(city.extractCountry(rs));
+    Citys cit=city.extractFromResultSet(rs);
+    hotel.setCity(cit);
+    hotel.setCountry(cit.getCountry());
     hotel.setId(rs.getLong("HOTELS.id"));
     hotel.setDiscription(rs.getString("HOTELS.description"));
     hotel.setName(rs.getString("HOTELS.name"));

@@ -27,9 +27,9 @@ public class JDBCBookingDao extends JDBCGenericDao<Bookings> implements BookingD
 
   public JDBCBookingDao(Connection connection) {
     super(connection, "INSERT INTO BOOKINGS(startDate, endDate, amountRooms, price, id_user, id_hotel) VALUES(?, ?, ?, ?, ?, ?)",
-            "SELECT * FROM BOOKING WHERE id = ?",
+            "SELECT * FROM BOOKINGS LEFT JOIN USERS ON id_user = USERS.id LEFT JOIN HOTELS ON id_hotel = HOTELS.id WHERE id = ?",
             "SELECT SQL_CALC_FOUND_ROWS * FROM BOOKINGS LIMIT ?,?",
-            "SELECT * FROM BOOKINGS",
+            "SELECT * FROM BOOKINGS LEFT JOIN USERS ON id_user = USERS.id LEFT JOIN HOTELS ON id_hotel = HOTELS.id",
             "SELECT COUNT(*) FROM BOOKINGS",
             "COUNT(*)",
             "UPDATE BOOKINGS SET startDate = ?, endDate = ?, amountRooms = ?, price = ?, id_user = ?, id_hotel = ? WHERE id = ?",

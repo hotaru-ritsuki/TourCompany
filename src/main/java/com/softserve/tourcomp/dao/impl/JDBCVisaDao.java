@@ -16,20 +16,18 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
   private final String createUsersToVisaQuery = "INSERT INTO USERS_VISAS (id_user,id_visa) VALUES (?,?)";
   private final String deleteUsersToVisaQuery = "DELETE FROM USERS_VISAS WHERE id_visa = ?";
   private final String selectUsersToVisaQuery = "SELECT * FROM USERS_VISAS JOIN USERS ON VISAS.id_user=USERS.id WHERE id_visa = ?";
-  private final String FindByVisaIdQuery = "";
-  private final String findVisasByEmailQuery = "";
   private final String findVisasByCountryIdQuery = "";
 
 
   public JDBCVisaDao(Connection connection) {
-    super(connection, "INSERT INTO VISAS (name, id_country) VALUES (?, ?)",
+    super(connection, "INSERT INTO VISAS (name) VALUES (?)",
             "SELECT * FROM VISAS WHERE id = ?",
             "SELECT SQL_CALC_FOUND_ROWS * FROM VISAS LIMIT ?,?",
             "SELECT * FROM VISAS",
             "SELECT COUNT(*) FROM VISAS",
             "COUNT(*)",
-            "UPDATE VISAS SET name = ?, id_country = ? WHERE id= ?",
-            3,
+            "UPDATE VISAS SET name = ? WHERE id= ?",
+            2,
             "DELETE FROM VISA WHERE id = ?",
             new VisaMapper());
   }
@@ -47,7 +45,6 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
   @Override
   void setEntityValues(PreparedStatement statement, Visas entity) throws SQLException {
     statement.setString(1, entity.getName());
-    statement.setLong(2, entity.getCountry().getId());
   }
 
   @Override
@@ -93,16 +90,6 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
     deleteUsersFromVisa(id);
     return statement.executeUpdate() > 0;
   }
-
- /* @Override
-  boolean createAction(PreparedStatement statement, Visas entity) throws SQLException {
-    if (insertIntoDb(statement, entity) == 1) {
-      setId(entity, getId(entity, statement));
-      insertUsersFromVisa(entity);
-      return true;
-    }
-    return false;
-  }*/
 
   @Override
   int updateOnDb(PreparedStatement statement, Visas entity) throws SQLException {
@@ -166,19 +153,6 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
     return Optional.ofNullable(entity);
   }
 
-  @Override
-  public List<Visas> findVisasByEmail(String email) {
-    List<Visas> found = null;
-
-    try (PreparedStatement statement = connection.prepareStatement(findVisasByEmailQuery)) {
-      statement.setString(1, email);
-      found = getAllFromVisasStatement(statement);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    return found;
-  }
-
   private List<Visas> getAllFromVisasStatement(PreparedStatement statement) throws SQLException {
     List<Visas> entities = new ArrayList<>();
     ResultSet rs = statement.executeQuery();
@@ -192,16 +166,4 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
     return entities;
   }
 
-  @Override
-  public List<Visas> findVisasByCountryId(Long countryId) {
-    List<Visas> found = null;
-
-    try (PreparedStatement statement = connection.prepareStatement(findVisasByCountryIdQuery)) {
-      statement.setLong(1, countryId);
-      found = getAllFromVisasStatement(statement);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    return found;
-  }
 }

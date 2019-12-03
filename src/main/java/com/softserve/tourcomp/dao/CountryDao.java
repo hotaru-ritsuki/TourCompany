@@ -12,4 +12,8 @@ public interface CountryDao extends GenericDao<Countrys>{
 
   Optional<Countrys> findCountryByCityId(Long cityId);
 
+  List<Countrys> findCountriesByVisaId(Long visaId);
+
+
+
 }
