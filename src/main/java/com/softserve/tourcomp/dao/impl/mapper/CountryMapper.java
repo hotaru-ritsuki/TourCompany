@@ -18,6 +18,7 @@ public class CountryMapper implements ObjectMapper<Countrys> {
       country.setVisa(visa.extractFromResultSet(rs));
     }
     catch(SQLException e){
+      System.out.println("IM HERE");
       country.setVisa(new Visas());
     }
     return country;

@@ -1,8 +1,13 @@
 package com.softserve.tourcomp;
 
+<<<<<<< HEAD
 
 import com.softserve.tourcomp.dto.country.CountryRequest;
 import com.softserve.tourcomp.dto.user.UserRequest;
+=======
+import com.softserve.tourcomp.dao.CountryDao;
+import com.softserve.tourcomp.dao.impl.JDBCDaoFactory;
+>>>>>>> 310f9d6c524a056a0bb7db7ee0839b816b845ba2
 import com.softserve.tourcomp.entity.Countrys;
 import com.softserve.tourcomp.service.CountryService;
 import com.softserve.tourcomp.service.UserService;
@@ -31,6 +36,9 @@ public class App
 ////        countryRequest.setName("adsa");
 ////        countryRequest.setVisa(1L);
 ////        countryService.create(countryRequest);
+        JDBCDaoFactory daoFactory=new JDBCDaoFactory();
+        CountryDao countryDao=daoFactory.createCountryDao();
+        System.out.println(countryDao.findById(1L));
 
     }
 }
