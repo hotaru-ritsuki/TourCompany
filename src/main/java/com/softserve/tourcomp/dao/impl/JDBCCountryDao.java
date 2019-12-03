@@ -32,6 +32,10 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
             new CountryMapper());
   }
 
+  public static void main(String[] args) {
+    JDBCCountryDao jdbcCountryDao=new JDBCDaoFactory().createCountryDao();
+
+  }
   @Override
   long getId(Countrys entity) {
     return entity.getId();

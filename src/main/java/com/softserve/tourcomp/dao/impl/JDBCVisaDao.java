@@ -55,7 +55,6 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
       int affected = insertIntoDb(statement, entity);
       if (affected == 1) {
         setId(entity, getId(entity, statement));
-        insertUsersFromVisa(entity);
         created = true;
       }
     } catch (Exception ex) {
@@ -68,7 +67,7 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
   boolean createAction(PreparedStatement statement,Visas entity) throws SQLException{
     if (insertIntoDb(statement,entity) == 1) {
       setId(entity, getId(entity, statement));
-      insertUsersFromVisa(entity);
+      //insertUsersFromVisa(entity);
       return true;
     }
     return false;
@@ -87,7 +86,7 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
 
   private boolean deleteVisa(PreparedStatement statement, Long id) throws SQLException {
     statement.setLong(1, id);
-    deleteUsersFromVisa(id);
+    //deleteUsersFromVisa(id);
     return statement.executeUpdate() > 0;
   }
 
@@ -95,47 +94,42 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
   int updateOnDb(PreparedStatement statement, Visas entity) throws SQLException {
     setEntityValues(statement, entity);
     statement.setLong(UpdateIdParameterIndex, entity.getId());
-    deleteUsersFromVisa(entity.getId());
-    insertUsersFromVisa(entity);
+    //deleteUsersFromVisa(entity.getId());
+    //insertUsersFromVisa(entity);
     return statement.executeUpdate();
   }
 
   @Override
   Visas extractEntity(ResultSet rs) throws SQLException {
     Visas extracted = mapper.extractFromResultSet(rs);
-    extracted.setUsers(getUsersFromVisa(extracted.getId()));
     return extracted;
   }
 
-  private void insertUsersFromVisa(Visas from) throws SQLException {
-    try (PreparedStatement insertUsers = connection.prepareStatement(createUsersToVisaQuery)) {
-      insertUsers.setLong(1, from.getId());
-      for (Users user : from.getUsers()) {
-        insertUsers.setLong(2, user.getId());
-        insertUsers.executeUpdate();
-      }
-    }
-  }
-
-  private void deleteUsersFromVisa(long visaId) throws SQLException {
-    try (PreparedStatement statement = connection.prepareStatement(deleteUsersToVisaQuery)) {
-      statement.setLong(1, visaId);
-      statement.execute();
-    }
-  }
-
-  private List<Users> getUsersFromVisa(long visaId) throws SQLException {
-    List<Users> result = new ArrayList<>();
-    try (PreparedStatement statement = connection.prepareStatement(selectUsersToVisaQuery)) {
-      statement.setLong(1, visaId);
-      ObjectMapper<Users> userMapper = new UserMapper();
-      ResultSet rs = statement.executeQuery();
-      while (rs.next()) {
-        result.add(userMapper.extractFromResultSet(rs));
-      }
-    }
-    return result;
-  }
+//  private void insertUsersFromVisa(Visas from) throws SQLException {
+//    try (PreparedStatement insertUsers = connection.prepareStatement(createUsersToVisaQuery)) {
+//      insertUsers.setLong(1, from.getId());
+//    }
+//  }
+//
+//  private void deleteUsersFromVisa(long visaId) throws SQLException {
+//    try (PreparedStatement statement = connection.prepareStatement(deleteUsersToVisaQuery)) {
+//      statement.setLong(1, visaId);
+//      statement.execute();
+//    }
+//  }
+//
+//  private List<Users> getUsersFromVisa(long visaId) throws SQLException {
+//    List<Users> result = new ArrayList<>();
+//    try (PreparedStatement statement = connection.prepareStatement(selectUsersToVisaQuery)) {
+//      statement.setLong(1, visaId);
+//      ObjectMapper<Users> userMapper = new UserMapper();
+//      ResultSet rs = statement.executeQuery();
+//      while (rs.next()) {
+//        result.add(userMapper.extractFromResultSet(rs));
+//      }
+//    }
+//    return result;
+//  }
 
   @Override
   public Optional<Visas> findById(Long visaId) {
