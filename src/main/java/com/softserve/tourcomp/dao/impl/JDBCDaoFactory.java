@@ -10,32 +10,32 @@ public class JDBCDaoFactory extends DaoFactory {
   private DataSource dataSource = ConnectionPoolHolder.getDataSource();
 
   @Override
-  public BookingDao createBookingDao() {
+  public JDBCBookingDao createBookingDao() {
     return new JDBCBookingDao(getConnection());
   }
 
   @Override
-  public UserDao createUserDao() {
+  public JDBCUserDao createUserDao() {
     return new JDBCUserDao(getConnection());
   }
 
   @Override
-  public HotelDao createHotelDao() {
+  public JDBCHotelDao createHotelDao() {
     return new JDBCHotelDao(getConnection());
   }
 
   @Override
-  public VisaDao createVisaDao() {
+  public JDBCVisaDao createVisaDao() {
     return new JDBCVisaDao(getConnection());
   }
 
   @Override
-  public CityDao createCityDao() {
+  public JDBCCityDao createCityDao() {
     return new JDBCCityDao(getConnection());
   }
 
   @Override
-  public CountryDao createCountryDao() {
+  public JDBCCountryDao createCountryDao() {
     return new JDBCCountryDao(getConnection());
   }
 
