@@ -5,6 +5,8 @@ import lombok.*;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Users {
   private Long id;
   private String firstName;

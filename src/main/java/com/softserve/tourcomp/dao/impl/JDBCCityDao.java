@@ -24,7 +24,6 @@ public class JDBCCityDao extends JDBCGenericDao<Citys> implements CityDao {
     super( connection,
             "INSERT INTO CITYS(name, id_country) VALUES(?,?)",
             "SELECT * FROM CITYS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id WHERE id = ?",
-            "SELECT SQL_CALC_FOUND_ROWS * FROM CITYS LIMIT ?,?",
             "SELECT * FROM CITYS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id ",
             "SELECT COUNT(*) FROM CITYS ",
             "COUNT(*)",

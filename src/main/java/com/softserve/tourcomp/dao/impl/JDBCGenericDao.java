@@ -14,7 +14,6 @@ public abstract class JDBCGenericDao<E> implements GenericDao<E> {
 
   String CreateQuery;
   String FindByIDQuery;
-  String FindRangeQuery;
   String FindAllQuery;
   String CountQuery;
   String CountColumnLabel;
@@ -23,11 +22,10 @@ public abstract class JDBCGenericDao<E> implements GenericDao<E> {
   String DeleteQuery;
   ObjectMapper<E> mapper;
 
-  JDBCGenericDao(Connection connection, String createQuery, String findByIDQuery, String findRangeQuery, String findAllQuery, String countQuery, String countColumnLabel, String updateQuery, int updateIdParameterIndex, String deleteQuery, ObjectMapper<E> mapper) {
+  JDBCGenericDao(Connection connection, String createQuery, String findByIDQuery, String findAllQuery, String countQuery, String countColumnLabel, String updateQuery, int updateIdParameterIndex, String deleteQuery, ObjectMapper<E> mapper) {
     this.connection = connection;
     CreateQuery = createQuery;
     FindByIDQuery = findByIDQuery;
-    FindRangeQuery = findRangeQuery;
     FindAllQuery = findAllQuery;
     CountQuery = countQuery;
     CountColumnLabel = countColumnLabel;
@@ -63,21 +61,6 @@ public abstract class JDBCGenericDao<E> implements GenericDao<E> {
     }
     return Optional.ofNullable(entity);
   }
-
-  @Override
-  public List<E> findRange(int start, int count){
-    List<E> found = null;
-    try (PreparedStatement statement = connection.prepareStatement(FindRangeQuery)){
-      statement.setInt(1,start);
-      statement.setInt(2,count);
-      found = getAllFromStatement(statement);
-    }catch (Exception ex){
-      ex.printStackTrace();
-      found = new ArrayList<>();
-    }
-    return found;
-  }
-
 
   @Override
   public List<E> findAll() {

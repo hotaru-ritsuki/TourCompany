@@ -6,7 +6,6 @@ import java.util.Optional;
   public interface GenericDao<E> extends AutoCloseable{
     boolean create(E entity);
     List<E> findAll();
-    List<E> findRange(int start, int count);
     Optional<E> findById(long id);
     long count();
     boolean update(E entity);

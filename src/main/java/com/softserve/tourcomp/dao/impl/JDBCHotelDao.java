@@ -27,7 +27,6 @@ public class JDBCHotelDao extends JDBCGenericDao<Hotels> implements HotelDao {
   public JDBCHotelDao(Connection connection) {
     super(connection,"INSERT INTO HOTELS (name, numberRooms, id_city, priceNight, discription) VALUES (?,?,?,?,?)",
             "SELECT * FROM HOTELS LEFT JOIN CITYS ON id_city = CITYS.id LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id WHERE id = ?",
-            "SELECT SQL_CALC_FOUND_ROWS * FROM HOTELS LIMIT ?,?",
             "SELECT * FROM HOTELS LEFT JOIN CITYS ON id_city = CITYS.id LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id",
             "SELECT COUNT(*) FROM HOTELS",
             "COUNT(*)",
