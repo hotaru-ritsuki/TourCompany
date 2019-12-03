@@ -15,21 +15,22 @@ public class App
 {
     public static void main( String[] args )
     {
-        UserService userService=new UserService();
-        System.out.println(userService.findOneUser(1L));
-
-//        UserRequest userRequest=new UserRequest();
-//        userRequest.setFirstName("asfd");
-//        userRequest.setLastName("sfdf");
-//        userRequest.setEmail("sdfhvsnbd");
-//        userRequest.setPassword("sfad");
-//        userRequest.setCountry(1L);
-//        userService.create(userRequest);
-//        CountryService countryService=new CountryService();
-//        CountryRequest countryRequest=new CountryRequest();
-//        countryRequest.setName("adsa");
-//        countryRequest.setVisa(1L);
-//        countryService.create(countryRequest);
+//        UserService userService=new UserService();
+//        System.out.println(userService.findOne(1L));
+//
+////        UserRequest userRequest=new UserRequest();
+////        userRequest.setFirstName("asfd");
+////        userRequest.setLastName("sfdf");
+////        userRequest.setEmail("sdfhvsnbd");
+////        userRequest.setPassword("sfad");
+////        userRequest.setCountry(1L);
+////        userService.create(userRequest);
+////        CountryService countryService=new CountryService();
+////        System.out.println(countryService.findOneCountry(1L));
+////        CountryRequest countryRequest=new CountryRequest();
+////        countryRequest.setName("adsa");
+////        countryRequest.setVisa(1L);
+////        countryService.create(countryRequest);
 
     }
 }

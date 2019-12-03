@@ -5,12 +5,15 @@ import com.softserve.tourcomp.dao.VisaDao;
 import com.softserve.tourcomp.dao.impl.JDBCDaoFactory;
 import com.softserve.tourcomp.dto.country.CountryRequest;
 import com.softserve.tourcomp.dto.country.CountryResponse;
+import com.softserve.tourcomp.dto.visa.VisaResponse;
 import com.softserve.tourcomp.entity.Countrys;
+import com.softserve.tourcomp.entity.Visas;
 
 public class CountryService {
   private JDBCDaoFactory daoFactory=new JDBCDaoFactory();
   private CountryDao countryDao= daoFactory.createCountryDao();
   private VisaDao visaDao = daoFactory.createVisaDao();
+  private VisaService visaService=new VisaService();
 
   public void create(CountryRequest country){
     Countrys countrys=new Countrys();
@@ -19,12 +22,18 @@ public class CountryService {
     countryDao.create(countrys);
   }
 
-  public void findOneCountry(Long id){
-
+  public Countrys findOneCountry(Long id){
+    return countryDao.findById(id)
+          .orElseThrow(() -> new IllegalArgumentException("User with id " + id + " not exists"));
   }
-  private CountryResponse countryToCountryResponse(){
+  protected CountryResponse countryToCountryResponse(Countrys country){
     CountryResponse cr = new CountryResponse();
-
+    cr.setId(country.getId());
+    cr.setName(country.getName());
+    Visas visa=country.getVisa();
+    if (visa != null){
+      cr.setVisa(visaService.visaToVisaResponse(visa));
+    }
     return cr;
   }
 

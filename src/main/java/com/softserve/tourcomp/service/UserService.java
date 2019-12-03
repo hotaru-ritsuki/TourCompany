@@ -5,15 +5,22 @@ import com.softserve.tourcomp.dao.impl.JDBCDaoFactory;
 import com.softserve.tourcomp.dao.impl.JDBCUserDao;
 import com.softserve.tourcomp.dto.user.UserRequest;
 import com.softserve.tourcomp.dto.user.UserResponse;
+import com.softserve.tourcomp.dto.visa.VisaResponse;
+import com.softserve.tourcomp.entity.Countrys;
 import com.softserve.tourcomp.entity.Users;
+import com.softserve.tourcomp.entity.Visas;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class UserService {
   private JDBCDaoFactory daoFactory=new JDBCDaoFactory();
   private JDBCUserDao userDao= daoFactory.createUserDao();
   private JDBCCountryDao countryDao= daoFactory.createCountryDao();
+  private CountryService countryService =new CountryService();
+  private VisaService visaService =new VisaService();
 
   public void create(UserRequest userRequest){
     Users user =new Users();
@@ -49,7 +56,20 @@ public class UserService {
     ur.setFirstName(user.getFirstName());
     ur.setLastName(user.getLastName());
     ur.setIsAdmin(user.getIsAdmin());
-//    ur.setCountry(user.getCountry());
+    Countrys country=user.getCountry();
+    if (country!= null){
+      ur.setCountry(countryService.countryToCountryResponse(country));
+    }
+    List<Visas> list=user.getVisas();
+    if (!list.isEmpty()){
+      List<VisaResponse> listr=new ArrayList<>();
+      for (int i = 0; i < list.size(); i++) {
+        if (list.get(i)!=null) {
+          listr.add(visaService.visaToVisaResponse(list.get(i)));
+        }
+      }
+      ur.setVisas(listr);
+    }
     return ur;
   }
 

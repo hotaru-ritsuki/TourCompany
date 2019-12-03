@@ -22,9 +22,10 @@ public class VisaService implements VisaServiceInf {
           .orElseThrow(() -> new IllegalArgumentException("Car with id " + id + " not exists"));
   }
 
-  private VisaResponse visaToVisaResponse(Visas visa){
+  protected VisaResponse visaToVisaResponse(Visas visa){
     VisaResponse vr=new VisaResponse();
-
+    vr.setId(visa.getId());
+    vr.setName(visa.getName());
     return vr;
   }
 }
