@@ -162,7 +162,8 @@ statement.setString(1,entity.getFirstName());
   @Override
   Users extractEntity(ResultSet rs) throws SQLException {
     Users extracted = mapper.extractFromResultSet(rs);
-    extracted.setVisas(getVisas(extracted.getId()));
+//    extracted.setCountry(getVisas(extracted.getId()));
+//    extracted.setVisas(getVisas(extracted.getId()));
     return extracted;
   }
 
@@ -175,7 +176,6 @@ statement.setString(1,entity.getFirstName());
       int affected = insertIntoDb(statement,entity);
       if (affected == 1) {
         setId(entity, getId(entity, statement));
-        insertVisas(entity);
         created = true;
       }
     } catch (Exception ex) {

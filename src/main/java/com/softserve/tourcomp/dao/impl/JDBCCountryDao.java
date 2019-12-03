@@ -21,7 +21,7 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
 
   public JDBCCountryDao(Connection connection) {
     super(connection,"INSERT INTO COUNTRYS (name, id_visa) VALUES (?, ?)",
-            "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON id_visa = VISAS.id WHERE id = ?",
+            "SELECT * FROM COUNTRYS WHERE id = ?",
             "SELECT SQL_CALC_FOUND_ROWS * FROM COUNTRYS LIMIT ?,?",
             "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON id_visa = VISAS.id",
             "SELECT COUNT(*) FROM COUNTRYS",

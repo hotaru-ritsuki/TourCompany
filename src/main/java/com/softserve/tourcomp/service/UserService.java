@@ -1,17 +1,19 @@
 package com.softserve.tourcomp.service;
 
-import com.softserve.tourcomp.dao.CountryDao;
-import com.softserve.tourcomp.dao.DaoFactory;
-import com.softserve.tourcomp.dao.UserDao;
 import com.softserve.tourcomp.dao.impl.JDBCCountryDao;
 import com.softserve.tourcomp.dao.impl.JDBCDaoFactory;
+import com.softserve.tourcomp.dao.impl.JDBCUserDao;
 import com.softserve.tourcomp.dto.user.UserRequest;
+import com.softserve.tourcomp.dto.user.UserResponse;
 import com.softserve.tourcomp.entity.Users;
+
+import java.sql.SQLException;
+import java.util.Optional;
 
 public class UserService {
   private JDBCDaoFactory daoFactory=new JDBCDaoFactory();
-  private UserDao userDao= daoFactory.createUserDao();
-  private JDBCCountryDao countryDao= (JDBCCountryDao) daoFactory.createCountryDao();
+  private JDBCUserDao userDao= daoFactory.createUserDao();
+  private JDBCCountryDao countryDao= daoFactory.createCountryDao();
 
   public void create(UserRequest userRequest){
     Users user =new Users();
@@ -23,5 +25,33 @@ public class UserService {
     user.setCountry(countryDao.findById(userRequest.getCountry()).get());
     userDao.create(user);
   }
+
+  public UserResponse findOne(Long id) throws IllegalArgumentException{
+    Optional<Users> byId = userDao.findById(id);
+    if (byId.isPresent()) {
+      Users users = byId.get();
+      return UserToUserResponse(users);
+    }
+      new IllegalArgumentException("User with id " + id + " not exists");
+    return null;
+  }
+
+  public Users findOneUser(Long id){
+    return userDao.findById(id)
+          .orElseThrow(() -> new IllegalArgumentException("User with id " + id + " not exists"));
+  }
+
+
+  private UserResponse UserToUserResponse(Users user){
+    UserResponse ur =new UserResponse();
+    ur.setId(user.getId());
+    ur.setEmail(user.getEmail());
+    ur.setFirstName(user.getFirstName());
+    ur.setLastName(user.getLastName());
+    ur.setIsAdmin(user.getIsAdmin());
+//    ur.setCountry(user.getCountry());
+    return ur;
+  }
+
 
 }

@@ -21,17 +21,17 @@ public class JDBCCityDao extends JDBCGenericDao<Citys> implements CityDao {
   private final String FindByHotelIdQuery = "SELECT * FROM CITYS LEFT JOIN BOOKINGS ON CITYS.id = HOTELS.id_city WHERE HOTELS.id = ?";
 
   public JDBCCityDao(Connection connection) {
-    super( connection,
-            "INSERT INTO CITYS(name, id_country) VALUES(?,?)",
-            "SELECT * FROM CITYS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id WHERE id = ?",
-            "SELECT SQL_CALC_FOUND_ROWS * FROM CITYS LIMIT ?,?",
-            "SELECT * FROM CITYS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id ",
-            "SELECT COUNT(*) FROM CITYS ",
-            "COUNT(*)",
-            "UPDATE CITYS SET name = ?, id_country = ? WHERE id = ?",
-            3,
-            "DELETE FROM CITYS WHERE id = ?",
-            new CityMapper());
+    super(connection,
+          "INSERT INTO CITYS(name, id_country) VALUES(?,?)",
+          "SELECT * FROM CITYS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id WHERE id = ?",
+          "SELECT SQL_CALC_FOUND_ROWS * FROM CITYS LIMIT ?,?",
+          "SELECT * FROM CITYS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id ",
+          "SELECT COUNT(*) FROM CITYS ",
+          "COUNT(*)",
+          "UPDATE CITYS SET name = ?, id_country = ? WHERE id = ?",
+          3,
+          "DELETE FROM CITYS WHERE id = ?",
+          new CityMapper());
   }
 
   @Override
@@ -41,13 +41,13 @@ public class JDBCCityDao extends JDBCGenericDao<Citys> implements CityDao {
 
   @Override
   void setId(Citys entity, long Id) throws SQLException {
-entity.setId(Id);
+    entity.setId(Id);
   }
 
   @Override
   void setEntityValues(PreparedStatement statement, Citys entity) throws SQLException {
-statement.setString(1,entity.getName());
-statement.setLong(2,entity.getCountry().getId());
+    statement.setString(1, entity.getName());
+    statement.setLong(2, entity.getCountry().getId());
   }
 
   @Override

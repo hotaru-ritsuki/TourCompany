@@ -103,7 +103,7 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
   @Override
   Visas extractEntity(ResultSet rs) throws SQLException {
     Visas extracted = mapper.extractFromResultSet(rs);
-    extracted.setUsers(getUsersFromVisa(extracted.getId()));
+    //extracted.setUsers(getUsersFromVisa(extracted.getId()));
     return extracted;
   }
 

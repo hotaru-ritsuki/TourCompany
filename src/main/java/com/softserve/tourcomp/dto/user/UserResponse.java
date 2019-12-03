@@ -1,5 +1,6 @@
 package com.softserve.tourcomp.dto.user;
 
+import com.softserve.tourcomp.dto.country.CountryResponse;
 import com.softserve.tourcomp.entity.Countrys;
 import com.softserve.tourcomp.entity.Visas;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,6 @@ public class UserResponse {
   private String lastName;
   private String email;
   private Boolean isAdmin;
-  private Countrys country;
+  private CountryResponse country;
   private List<Visas> visas;
 }
