@@ -9,6 +9,5 @@ public class Hotels {
   private Integer numberRoom;
   private Integer priceNight;
   private String discription;
-  private Countrys country;
   private Citys city;
 }

@@ -1,9 +1,11 @@
 package com.softserve.tourcomp.dao.impl;
 
 import com.softserve.tourcomp.dao.UserDao;
+import com.softserve.tourcomp.dao.impl.mapper.CountryMapper;
 import com.softserve.tourcomp.dao.impl.mapper.ObjectMapper;
 import com.softserve.tourcomp.dao.impl.mapper.UserMapper;
 import com.softserve.tourcomp.dao.impl.mapper.VisaMapper;
+import com.softserve.tourcomp.entity.Countrys;
 import com.softserve.tourcomp.entity.Users;
 import com.softserve.tourcomp.entity.Visas;
 
@@ -20,10 +22,11 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
   private final String findUsersByCountryIdQuery = "SELECT * FROM USERS WHERE country_id = ?";
   private final String findUsersByVisaIdQuery = "SELECT * FROM USERS_VISAS LEFT JOIN USERS ON USERS.id = USERS_VISAS.id_user WHERE id_visa = ?";
   private final String FindUserByBookingIdQuery = "SELECT * FROM BOOKINGS LEFT JOIN USERS ON BOOKINGS.id_user = USERS.id WHERE BOOKINGS.id = ?";
-
   private final String createVisasQuery = "INSERT INTO USERS_VISAS(id_user, id_visa) VALUES (?,?)";
   private final String deleteVisasQuery = "DELETE FROM USERS_VISAS WHERE id_visa = ?";
-  private final String FindVisasQuery = "SELECT ";
+  private final String FindVisasQuery = "SELECT * FROM USERS LEFT JOIN USERS_VISAS ON USERS.id = id_user LEFT JOIN VISAS ON VISAS.id = id_visa WHERE USERS.id = ?";
+  private CountryMapper countryMapper = new CountryMapper();
+  private final String FindCountryByUserIdQuery = "SELECT * FROM USERS LEFT JOIN COUNTRYS ON USERS.id_country=COUNTRYS.id WHERE USERS.id = ?";
 
   public JDBCUserDao(Connection connection) {
     super(connection,"INSERT INTO USERS (firstName, lastName, email, password, isAdmin, id_country) VALUES (?, ?, ?, ?, ?, ?);",
@@ -162,9 +165,24 @@ statement.setString(1,entity.getFirstName());
   @Override
   Users extractEntity(ResultSet rs) throws SQLException {
     Users extracted = mapper.extractFromResultSet(rs);
-//    extracted.setCountry(getVisas(extracted.getId()));
-//    extracted.setVisas(getVisas(extracted.getId()));
+    extracted.setVisas(getVisas(extracted.getId()));
+    extracted.setCountry(getCountrys(extracted.getId()));
     return extracted;
+  }
+
+  private Countrys getCountrys(Long id) {
+    Countrys entity = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(FindCountryByUserIdQuery)) {
+      statement.setLong(1, id);
+      ResultSet result = statement.executeQuery();
+      if (result.next()) {
+        entity = countryMapper.extractFromResultSet(result);
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return Optional.ofNullable(entity).get();
   }
 
 
