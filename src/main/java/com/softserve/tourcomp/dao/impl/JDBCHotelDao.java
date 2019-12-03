@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public class JDBCHotelDao extends JDBCGenericDao<Hotels> implements HotelDao {
   private final String findHotelsByCityIdQuery = "SELECT * FROM HOTELS WHERE id_city = ?";
-  private final String findHotelsByCountryIdQuery = "SELECT * FROM HOTELS WHERE id_country = ?";
+  private final String findHotelsByCountryIdQuery = "SELECT * FROM HOTELS /*/*/*/*/ WHERE id_country = ?";
   private final String findHotelsByPricePerNightQuery = "SELECT * FROM HOTELS WHERE priceNight > ? AND priceNight < ?";
   private final String findHotelsByLowerPricePerNightQuery = "SELECT * FROM HOTELS WHERE priceNight < ? ";
   private final String findHotelsByHigherPricePerNightQuery = "SELECT * FROM HOTELS WHERE priceNight > ?";
@@ -25,7 +25,7 @@ public class JDBCHotelDao extends JDBCGenericDao<Hotels> implements HotelDao {
   private final String FindByHotelNameQuery = "SELECT * FROM HOTELS WHERE name = ?";
 
   public JDBCHotelDao(Connection connection) {
-    super(connection,"INSERT INTO HOTELS (name, numberRooms, id_country, id_city, priceNight, discription) VALUES (?,?,?,?,?,?)",
+    super(connection,"INSERT INTO HOTELS (name, numberRooms, id_city, priceNight, discription) VALUES (?,?,?,?,?)",
             "SELECT * FROM HOTELS LEFT JOIN CITYS ON id_city = CITYS.id LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id WHERE id = ?",
             "SELECT SQL_CALC_FOUND_ROWS * FROM HOTELS LIMIT ?,?",
             "SELECT * FROM HOTELS LEFT JOIN CITYS ON id_city = CITYS.id LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id",
@@ -51,10 +51,9 @@ entity.setId(Id);
   void setEntityValues(PreparedStatement statement, Hotels entity) throws SQLException {
 statement.setString(1,entity.getName());
 statement.setInt(2,entity.getNumberRoom());
-statement.setLong(3,entity.getCountry().getId());
-statement.setLong(4,entity.getCity().getId());
-statement.setInt(5,entity.getPriceNight());
-statement.setString(6,entity.getDiscription());
+statement.setLong(3,entity.getCity().getId());
+statement.setInt(4,entity.getPriceNight());
+statement.setString(5,entity.getDiscription());
   }
 
   @Override

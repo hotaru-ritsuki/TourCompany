@@ -21,11 +21,9 @@ public class HotelMapper implements ObjectMapper<Hotels> {
     try{
       Citys cit=city.extractFromResultSet(rs);
       hotel.setCity(cit);
-      hotel.setCountry(cit.getCountry());
     }
     catch (SQLException excp){
       hotel.setCity(new Citys());
-      hotel.setCountry(new Countrys());
     }
     return hotel;
   }
