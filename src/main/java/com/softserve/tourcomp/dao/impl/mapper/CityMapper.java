@@ -14,7 +14,12 @@ public class CityMapper implements ObjectMapper<Citys> {
     CountryMapper country=new CountryMapper();
     city.setId(rs.getLong("CITYS.id"));
     city.setName(rs.getString("CITYS.name"));
-    city.setCountry(this.extractCountry(rs));
+    try {
+      city.setCountry(this.extractCountry(rs));
+    }
+    catch (SQLException exc){
+      city.setCountry(new Countrys());
+    }
     return city;
   }
   public Countrys extractCountry(ResultSet rs) throws SQLException{

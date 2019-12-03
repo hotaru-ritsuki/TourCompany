@@ -1,5 +1,6 @@
 package com.softserve.tourcomp.dao.impl.mapper;
 
+import com.softserve.tourcomp.entity.Countrys;
 import com.softserve.tourcomp.entity.Users;
 
 import java.sql.ResultSet;
@@ -16,7 +17,12 @@ public class UserMapper implements ObjectMapper<Users> {
     user.setFirstName(rs.getString("USERS.firstName"));
     user.setLastName(rs.getString("USERS.lastName"));
     user.setIsAdmin(rs.getBoolean("USERS.isAdmin"));
-    user.setCountry(country.extractFromResultSet(rs));
+    try{
+      user.setCountry(country.extractFromResultSet(rs));
+    }
+    catch(SQLException excp){
+      user.setCountry(new Countrys());
+    }
     //USERS VISA MANY TO MANY
     return user;
 
