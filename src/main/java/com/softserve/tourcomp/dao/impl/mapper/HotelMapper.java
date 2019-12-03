@@ -10,9 +10,9 @@ public class HotelMapper implements ObjectMapper<Hotels> {
 
   @Override
   public Hotels extractFromResultSet(ResultSet rs) throws SQLException {
-    Hotels hotel=new Hotels();
-    CityMapper city=new CityMapper();
-    Citys cit=city.extractFromResultSet(rs);
+    Hotels hotel = new Hotels();
+    CityMapper city = new CityMapper();
+    Citys cit = city.extractFromResultSet(rs);
     hotel.setCity(cit);
     hotel.setCountry(cit.getCountry());
     hotel.setId(rs.getLong("HOTELS.id"));
