@@ -14,7 +14,12 @@ public class CountryMapper implements ObjectMapper<Countrys> {
     VisaMapper visa=new VisaMapper();
     country.setId(rs.getLong("COUNTRYS.id"));
     country.setName(rs.getString("COUNTRYS.name"));
-    country.setVisa(visa.extractFromResultSet(rs));
+    try {
+      country.setVisa(visa.extractFromResultSet(rs));
+    }
+    catch(SQLException e){
+      country.setVisa(new Visas());
+    }
     return country;
   }
 }

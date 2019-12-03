@@ -13,7 +13,7 @@ public class ConnectionPoolHolder {
       synchronized (ConnectionPoolHolder.class) {
         if (dataSource == null) {
           BasicDataSource ds = new BasicDataSource();
-          ds.setUrl("jdbc:mysql://localhost:8080");
+          ds.setUrl("jdbc:mysql://localhost:3306/TourFirm?serverTimezone=UTC");
           ds.setUsername("root");
           ds.setPassword("Root1234");
           ds.setMinIdle(5);

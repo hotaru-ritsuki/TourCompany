@@ -201,21 +201,6 @@ statement.setString(1,entity.getFirstName());
     return statement.executeUpdate() > 0;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   private void insertVisas(Users from) throws SQLException {
     try (PreparedStatement insertVisas = connection.prepareStatement(createVisasQuery)){
       insertVisas.setLong(1,from.getId());
