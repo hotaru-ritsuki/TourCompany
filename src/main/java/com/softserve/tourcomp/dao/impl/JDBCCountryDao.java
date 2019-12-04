@@ -2,8 +2,7 @@ package com.softserve.tourcomp.dao.impl;
 
 import com.softserve.tourcomp.dao.CountryDao;
 import com.softserve.tourcomp.dao.impl.mapper.CountryMapper;
-import com.softserve.tourcomp.dao.impl.mapper.ObjectMapper;
-import com.softserve.tourcomp.entity.Citys;
+import com.softserve.tourcomp.dao.impl.mapper.VisaMapper;
 import com.softserve.tourcomp.entity.Countrys;
 
 import java.sql.Connection;
@@ -15,14 +14,14 @@ import java.util.List;
 import java.util.Optional;
 
 public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryDao {
-  private final String FindByCountryNameQuery = "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON id_visa = COUNTRYS.id WHERE name = ?";
-  private final String FindByCityIdQuery = "SELECT * FROM COUNTRYS LEFT JOIN CITYS ON COUNTRYS.id = CITYS.id_country WHERE CITYS.id = ?";
-  private final String findCountrysByVisaIdQuery = "SELECT * FROM COUNTRYS WHERE id_visa = ?";
+  private final String FindByCountryNameQuery = "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON id_visa = VISAS.id WHERE COUNTRYS.name = ?";
+  private final String FindByCityIdQuery = "SELECT * FROM COUNTRYS LEFT JOIN CITYS ON COUNTRYS.id = CITYS.id_country LEFT JOIN VISAS ON id_visa = VISAS.id WHERE CITYS.id = ?";
+  private final String findCountrysByVisaIdQuery = "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON countrys.id_visa = VISAS.id WHERE id_visa = ?";
+  private final String deleteAllCitiesRelatedCountry = "DELETE FROM CITYS WHERE id_country = ?";
 
   public JDBCCountryDao(Connection connection) {
-    super(connection,"INSERT INTO COUNTRYS (name, id_visa) VALUES (?, ?)",
-            "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON id_visa = VISAS.id WHERE COUNTRYS.id = ?",
-            "SELECT SQL_CALC_FOUND_ROWS * FROM COUNTRYS LIMIT ?,?",
+    super(connection, "INSERT INTO COUNTRYS (name, id_visa) VALUES (?, ?)",
+            "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON COUNTRYS.id_visa = VISAS.id WHERE COUNTRYS.id = ?",
             "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON id_visa = VISAS.id",
             "SELECT COUNT(*) FROM COUNTRYS",
             "COUNT(*)",
@@ -39,14 +38,48 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
 
   @Override
   void setId(Countrys entity, long Id) throws SQLException {
-entity.setId(Id);
+    entity.setId(Id);
+  }
+
+  @Override
+  public Countrys extractEntity(ResultSet rs) throws SQLException {
+    VisaMapper visaMapper = new VisaMapper();
+    Countrys country = mapper.extractFromResultSet(rs);
+    country.setVisa(visaMapper.extractFromResultSet(rs));
+    return country;
   }
 
   @Override
   void setEntityValues(PreparedStatement statement, Countrys entity) throws SQLException {
-statement.setString(1,entity.getName());
-statement.setLong(2,entity.getVisa().getId());
+    statement.setString(1, entity.getName());
+    statement.setLong(2, entity.getVisa().getId());
   }
+
+  @Override
+  public boolean delete(long countryId) {
+    boolean affected = false;
+    JDBCVisaDao jdbcVisaDao = new JDBCDaoFactory().createVisaDao();
+    try (PreparedStatement statement = connection.prepareStatement(DeleteQuery)) {
+      statement.setLong(1, countryId);
+      deleteAllCitiesRelatedCountry(countryId);
+      affected = deleteAllCitiesRelatedCountry(countryId) && transaction(statement, this::deleteEntity);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return affected;
+  }
+
+  private boolean deleteAllCitiesRelatedCountry(long countryId) {
+    boolean affected = false;
+    try (PreparedStatement statement = connection.prepareStatement(deleteAllCitiesRelatedCountry)) {
+      statement.setLong(1, countryId);
+      affected = transaction(statement, this::deleteEntity);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return affected;
+  }
+
 
   @Override
   public Optional<Countrys> findByCountryName(String nameCountry) {
@@ -67,7 +100,6 @@ statement.setLong(2,entity.getVisa().getId());
   @Override
   public Optional<Countrys> findCountryByCityId(Long cityId) {
     Countrys entity = null;
-
     try (PreparedStatement statement = connection.prepareStatement(FindByCityIdQuery)) {
       statement.setLong(1, cityId);
       ResultSet result = statement.executeQuery();
@@ -86,19 +118,19 @@ statement.setLong(2,entity.getVisa().getId());
 
     try (PreparedStatement statement = connection.prepareStatement(findCountrysByVisaIdQuery)) {
       statement.setLong(1, visaId);
-      found = getAllFromCountrysStatement(statement);
+      found = getAllFromStatement(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
     return found;
   }
 
-  private List<Countrys> getAllFromCountrysStatement(PreparedStatement statement) throws SQLException {
-    ObjectMapper<Countrys> countryMapper = new CountryMapper();
+  @Override
+  public List<Countrys> getAllFromStatement(PreparedStatement statement) throws SQLException {
     List<Countrys> entities = new ArrayList<>();
     ResultSet rs = statement.executeQuery();
     while (rs.next()) {
-      entities.add(countryMapper.extractFromResultSet(rs));
+      entities.add(extractEntity(rs));
     }
     return entities;
   }

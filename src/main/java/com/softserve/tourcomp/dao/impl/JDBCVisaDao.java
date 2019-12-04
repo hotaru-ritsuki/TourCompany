@@ -1,10 +1,7 @@
 package com.softserve.tourcomp.dao.impl;
 
 import com.softserve.tourcomp.dao.VisaDao;
-import com.softserve.tourcomp.dao.impl.mapper.ObjectMapper;
-import com.softserve.tourcomp.dao.impl.mapper.UserMapper;
 import com.softserve.tourcomp.dao.impl.mapper.VisaMapper;
-import com.softserve.tourcomp.entity.Users;
 import com.softserve.tourcomp.entity.Visas;
 
 import java.sql.*;
@@ -13,23 +10,46 @@ import java.util.List;
 import java.util.Optional;
 
 public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
-  private final String createUsersToVisaQuery = "INSERT INTO USERS_VISAS (id_user,id_visa) VALUES (?,?)";
   private final String deleteUsersToVisaQuery = "DELETE FROM USERS_VISAS WHERE id_visa = ?";
+  private final  String deleteCountrysToVisaQuery = "DELETE FROM COUNTRYS WHERE id_visa = ?";
   private final String selectUsersToVisaQuery = "SELECT * FROM USERS_VISAS JOIN USERS ON VISAS.id_user=USERS.id WHERE id_visa = ?";
-  private final String findVisasByCountryIdQuery = "";
+  private final String findVisasByCountryIdQuery = "SELECT * FROM VISAS JOIN COUNTRYS ON id_visa = VISAS.id";
 
 
   public JDBCVisaDao(Connection connection) {
     super(connection, "INSERT INTO VISAS (name) VALUES (?)",
             "SELECT * FROM VISAS WHERE id = ?",
-            "SELECT SQL_CALC_FOUND_ROWS * FROM VISAS LIMIT ?,?",
             "SELECT * FROM VISAS",
             "SELECT COUNT(*) FROM VISAS",
             "COUNT(*)",
             "UPDATE VISAS SET name = ? WHERE id= ?",
             2,
-            "DELETE FROM VISA WHERE id = ?",
+            "DELETE FROM VISAS WHERE id = ?",
             new VisaMapper());
+  }
+
+  public static void main(String[] args) {
+    JDBCDaoFactory jdbcDaoFactory=new JDBCDaoFactory();
+    JDBCVisaDao jdbcVisaDao=jdbcDaoFactory.createVisaDao();
+    /*Visas visa =new Visas(12L,"wwwwwwolol");
+    System.out.println(jdbcVisaDao.create(visa));
+    System.out.println(visa.getId());
+    */
+    /*
+    //System.out.println(jdbcVisaDao.findById(5L).get());
+     */
+    /*for (Visas visa : jdbcVisaDao.findAll()) {
+      System.out.println(visa);
+    }
+    */
+    //System.out.println(jdbcVisaDao.count());
+    /*System.out.println(jdbcVisaDao.update(new Visas(2L, "updated"))); true
+    System.out.println(jdbcVisaDao.update(new Visas(15L, "insert"))); false
+     */
+   // System.out.println(jdbcVisaDao.delete(12L)); //CONSTRASINTS COUNTRY,CITYS
+
+
+
   }
 
   @Override
@@ -47,6 +67,11 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
     statement.setString(1, entity.getName());
   }
 
+  /**
+   *
+   * @param entity
+   * @return
+   */
   @Override
   public boolean create(Visas entity) {
     boolean created = false;
@@ -63,60 +88,64 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
     return created;
   }
 
-  @Override
-  boolean createAction(PreparedStatement statement,Visas entity) throws SQLException{
-    if (insertIntoDb(statement,entity) == 1) {
-      setId(entity, getId(entity, statement));
-      //insertUsersFromVisa(entity);
-      return true;
-    }
-    return false;
-  }
-
+  /**
+   * Implements transactions, if deleting from USERS_VISAS wasn't successful,it returns false;
+   *
+   * @param visaId Visa Id which need to delete
+   * @return
+   */
   @Override
   public boolean delete(long visaId) {
     boolean affected = false;
     try (PreparedStatement statement = connection.prepareStatement(DeleteQuery)) {
+      deleteUsersRelatedVisa(visaId);
       affected = transaction(statement, visaId, this::deleteVisa);
+
     } catch (Exception ex) {
       ex.printStackTrace();
     }
     return affected;
   }
 
+  /**
+   * Supporting method for delete(long visaId) to develop transactions
+   *
+   * @param statement PreparedStatement with DeleteQuery
+   * @param id Visa Id which need to delete from VISAS table
+   * @return Returns true if method was completed, false if not
+   * @throws SQLException
+   */
   private boolean deleteVisa(PreparedStatement statement, Long id) throws SQLException {
     statement.setLong(1, id);
     //deleteUsersFromVisa(id);
     return statement.executeUpdate() > 0;
   }
 
+
   @Override
   int updateOnDb(PreparedStatement statement, Visas entity) throws SQLException {
     setEntityValues(statement, entity);
     statement.setLong(UpdateIdParameterIndex, entity.getId());
-    //deleteUsersFromVisa(entity.getId());
-    //insertUsersFromVisa(entity);
     return statement.executeUpdate();
   }
 
   @Override
   Visas extractEntity(ResultSet rs) throws SQLException {
-    Visas extracted = mapper.extractFromResultSet(rs);
-    return extracted;
+    return mapper.extractFromResultSet(rs);
   }
 
-//  private void insertUsersFromVisa(Visas from) throws SQLException {
-//    try (PreparedStatement insertUsers = connection.prepareStatement(createUsersToVisaQuery)) {
-//      insertUsers.setLong(1, from.getId());
-//    }
-//  }
-//
-//  private void deleteUsersFromVisa(long visaId) throws SQLException {
-//    try (PreparedStatement statement = connection.prepareStatement(deleteUsersToVisaQuery)) {
-//      statement.setLong(1, visaId);
-//      statement.execute();
-//    }
-//  }
+  private boolean deleteUsersRelatedVisa(long visaId) throws SQLException {
+    try (PreparedStatement statement = connection.prepareStatement(deleteUsersToVisaQuery)) {
+      statement.setLong(1, visaId);
+      statement.execute();
+      return true;
+    }
+    catch (SQLException excp){
+      excp.printStackTrace();
+      return false;
+    }
+  }
+
 //
 //  private List<Users> getUsersFromVisa(long visaId) throws SQLException {
 //    List<Users> result = new ArrayList<>();
@@ -130,7 +159,6 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
 //    }
 //    return result;
 //  }
-
   @Override
   public Optional<Visas> findById(Long visaId) {
     Visas entity = null;
@@ -147,17 +175,16 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
     return Optional.ofNullable(entity);
   }
 
-  private List<Visas> getAllFromVisasStatement(PreparedStatement statement) throws SQLException {
+@Override
+  public List<Visas> getAllFromStatement(PreparedStatement statement) throws SQLException {
     List<Visas> entities = new ArrayList<>();
     ResultSet rs = statement.executeQuery();
     while (rs.next()) {
-      Visas visa=mapper.extractFromResultSet(rs);
-      /*
-      Visas visa = extractEntity(rs);
-       */
-      entities.add(visa);
+      entities.add(mapper.extractFromResultSet(rs));
     }
     return entities;
   }
+
+
 
 }

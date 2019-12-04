@@ -32,9 +32,8 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
 
   public JDBCUserDao(Connection connection) {
     super(connection,"INSERT INTO USERS (firstName, lastName, email, password, isAdmin, id_country) VALUES (?, ?, ?, ?, ?, ?);",
-            "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id LEFT JOIN VISAS ON id_visa=VISAS.id WHERE id = ?",
-            "SELECT SQL_CALC_FOUND_ROWS * FROM USERS LIMIT ?,?",
-            "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id LEFT JOIN VISAS ON COUNTRYS.id_visa=VISAS.id ",
+            "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id WHERE id = ?",
+            "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id",
             "SELECT COUNT(*) FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id",
             "COUNT(*)",
             "UPDATE USERS SET firstName = ?, lastName = ?, email = ?, password = ?, isAdmin = ?, id_country = ? WHERE id = ?",

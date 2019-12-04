@@ -11,16 +11,8 @@ public class CountryMapper implements ObjectMapper<Countrys> {
   @Override
   public Countrys extractFromResultSet(ResultSet rs) throws SQLException {
     Countrys country=new Countrys();
-    VisaMapper visa=new VisaMapper();
     country.setId(rs.getLong("COUNTRYS.id"));
     country.setName(rs.getString("COUNTRYS.name"));
-    try {
-      country.setVisa(visa.extractFromResultSet(rs));
-    }
-    catch(SQLException e){
-      System.out.println("IM HERE");
-      country.setVisa(new Visas());
-    }
     return country;
   }
 }
