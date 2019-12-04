@@ -22,6 +22,10 @@ public class VisaService implements VisaServiceInf {
           .orElseThrow(() -> new IllegalArgumentException("Car with id " + id + " not exists"));
   }
 
+//  public VisaResponse findOne(Long id){
+//
+//  }
+
   protected VisaResponse visaToVisaResponse(Visas visa){
     VisaResponse vr=new VisaResponse();
     vr.setId(visa.getId());

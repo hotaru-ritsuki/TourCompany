@@ -26,13 +26,15 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
   private final String deleteVisasQuery = "DELETE FROM USERS_VISAS WHERE id_visa = ?";
   private final String FindVisasQuery = "SELECT * FROM USERS LEFT JOIN USERS_VISAS ON USERS.id = id_user LEFT JOIN VISAS ON VISAS.id = id_visa WHERE USERS.id = ?";
   private CountryMapper countryMapper = new CountryMapper();
-  private final String FindCountryByUserIdQuery = "SELECT * FROM USERS LEFT JOIN COUNTRYS ON USERS.id_country=COUNTRYS.id WHERE USERS.id = ?";
+  private VisaMapper visaMapper = new VisaMapper();
+  private final String FindCountryByUserIdQuery = "SELECT * FROM USERS LEFT JOIN COUNTRYS ON USERS.id_country=COUNTRYS.id LEFT JOIN VISAS ON COUNTRYS.id_visa=VISAS.id WHERE USERS.id = ?";
+  private final String FindVisaByCountryIdQuery = "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON COUNTRYS.id_visa=VISAS.id WHERE COUNTRYS.id = ?";
 
   public JDBCUserDao(Connection connection) {
     super(connection,"INSERT INTO USERS (firstName, lastName, email, password, isAdmin, id_country) VALUES (?, ?, ?, ?, ?, ?);",
-            "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id WHERE id = ?",
+            "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id LEFT JOIN VISAS ON id_visa=VISAS.id WHERE id = ?",
             "SELECT SQL_CALC_FOUND_ROWS * FROM USERS LIMIT ?,?",
-            "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id",
+            "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id LEFT JOIN VISAS ON COUNTRYS.id_visa=VISAS.id ",
             "SELECT COUNT(*) FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id",
             "COUNT(*)",
             "UPDATE USERS SET firstName = ?, lastName = ?, email = ?, password = ?, isAdmin = ?, id_country = ? WHERE id = ?",
@@ -167,6 +169,7 @@ statement.setString(1,entity.getFirstName());
     Users extracted = mapper.extractFromResultSet(rs);
     extracted.setVisas(getVisas(extracted.getId()));
     extracted.setCountry(getCountrys(extracted.getId()));
+//    extracted.getCountry().setVisa(getVisa(extracted.getCountry().getId()));
     return extracted;
   }
 
@@ -241,7 +244,7 @@ statement.setString(1,entity.getFirstName());
     try (PreparedStatement statement = connection.prepareStatement(FindVisasQuery)) {
       statement.setLong(1,userId);
       ResultSet rs =  statement.executeQuery();
-      VisaMapper visaMapper = new VisaMapper();
+
       while (rs.next()) {
         result.add(visaMapper.extractFromResultSet(rs));
       }

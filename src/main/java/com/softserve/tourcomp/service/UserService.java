@@ -10,7 +10,6 @@ import com.softserve.tourcomp.entity.Countrys;
 import com.softserve.tourcomp.entity.Users;
 import com.softserve.tourcomp.entity.Visas;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +47,14 @@ public class UserService {
           .orElseThrow(() -> new IllegalArgumentException("User with id " + id + " not exists"));
   }
 
+  public List<UserResponse> findAll(){
+    List<UserResponse> list=new ArrayList<>();
+    List<Users> users = userDao.findAll();
+    for(Users user:users){
+      list.add(UserToUserResponse(user));
+    }
+    return list;
+  }
 
   private UserResponse UserToUserResponse(Users user){
     UserResponse ur =new UserResponse();
