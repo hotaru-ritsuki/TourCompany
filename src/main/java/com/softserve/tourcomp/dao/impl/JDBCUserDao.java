@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
   private final String FindUserByEmailQuery = "SELECT * FROM USERS WHERE email = ?";
-  private final String FindUserByIdQuery= "SELECT * FROM USERS WHERE id = ?";
+  private final String FindUserByIdQuery = "SELECT * FROM USERS WHERE id = ?";
   private final String FindUserByUsernameQuery = "SELECT * FROM USERS WHERE firstName = ? AND lastName = ?";
   private final String findUsersByCountryIdQuery = "SELECT * FROM USERS WHERE country_id = ?";
   private final String findUsersByVisaIdQuery = "SELECT * FROM USERS_VISAS LEFT JOIN USERS ON USERS.id = USERS_VISAS.id_user WHERE id_visa = ?";
@@ -31,15 +31,15 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
   private final String FindVisaByCountryIdQuery = "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON COUNTRYS.id_visa=VISAS.id WHERE COUNTRYS.id = ?";
 
   public JDBCUserDao(Connection connection) {
-    super(connection,"INSERT INTO USERS (firstName, lastName, email, password, isAdmin, id_country) VALUES (?, ?, ?, ?, ?, ?);",
-            "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id WHERE id = ?",
-            "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id",
-            "SELECT COUNT(*) FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id",
-            "COUNT(*)",
-            "UPDATE USERS SET firstName = ?, lastName = ?, email = ?, password = ?, isAdmin = ?, id_country = ? WHERE id = ?",
-            7,
-            "DELETE FROM USERS WHERE id = ?",
-            new UserMapper());
+    super(connection, "INSERT INTO USERS (firstName, lastName, email, password, isAdmin, id_country) VALUES (?, ?, ?, ?, ?, ?);",
+          "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id LEFT JOIN VISAS ON id_visa=VISAS.id WHERE id = ?",
+          "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id LEFT JOIN VISAS ON COUNTRYS.id_visa=VISAS.id",
+          "SELECT COUNT(*) FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id",
+          "COUNT(*)",
+          "UPDATE USERS SET firstName = ?, lastName = ?, email = ?, password = ?, isAdmin = ?, id_country = ? WHERE id = ?",
+          7,
+          "DELETE FROM USERS WHERE id = ?",
+          new UserMapper());
   }
 
   @Override
@@ -103,7 +103,7 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
     }
     return found;
   }
-  
+
   private List<Users> getAllFromUsersStatement(PreparedStatement statement) throws SQLException {
     ObjectMapper<Users> userMapper = new UserMapper();
     List<Users> entities = new ArrayList<>();
@@ -150,17 +150,17 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
 
   @Override
   void setId(Users entity, long Id) throws SQLException {
-entity.setId(Id);
+    entity.setId(Id);
   }
 
   @Override
   void setEntityValues(PreparedStatement statement, Users entity) throws SQLException {
-statement.setString(1,entity.getFirstName());
-    statement.setString(2,entity.getLastName());
-    statement.setString(3,entity.getEmail());
-    statement.setString(4,entity.getPassword());
-    statement.setBoolean(5,entity.getIsAdmin());
-    statement.setLong(6,entity.getCountry().getId());
+    statement.setString(1, entity.getFirstName());
+    statement.setString(2, entity.getLastName());
+    statement.setString(3, entity.getEmail());
+    statement.setString(4, entity.getPassword());
+    statement.setBoolean(5, entity.getIsAdmin());
+    statement.setLong(6, entity.getCountry().getId());
   }
 
   @Override
@@ -193,7 +193,7 @@ statement.setString(1,entity.getFirstName());
     boolean created = false;
     try (PreparedStatement statement = connection.prepareStatement(CreateQuery, Statement.RETURN_GENERATED_KEYS)) {
 
-      int affected = insertIntoDb(statement,entity);
+      int affected = insertIntoDb(statement, entity);
       if (affected == 1) {
         setId(entity, getId(entity, statement));
         created = true;
@@ -208,7 +208,7 @@ statement.setString(1,entity.getFirstName());
   public boolean delete(long id) {
     boolean affected = false;
     try (PreparedStatement statement = connection.prepareStatement(DeleteQuery)) {
-      affected = transaction(statement,id,this::deleteUsers);
+      affected = transaction(statement, id, this::deleteUsers);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
@@ -222,9 +222,9 @@ statement.setString(1,entity.getFirstName());
   }
 
   private void insertVisas(Users from) throws SQLException {
-    try (PreparedStatement insertVisas = connection.prepareStatement(createVisasQuery)){
-      insertVisas.setLong(1,from.getId());
-      for(Visas visa: from.getVisas()) {
+    try (PreparedStatement insertVisas = connection.prepareStatement(createVisasQuery)) {
+      insertVisas.setLong(1, from.getId());
+      for (Visas visa : from.getVisas()) {
         insertVisas.setLong(2, visa.getId());
         insertVisas.executeUpdate();
       }
@@ -241,8 +241,8 @@ statement.setString(1,entity.getFirstName());
   private List<Visas> getVisas(long userId) throws SQLException {
     List<Visas> result = new ArrayList<>();
     try (PreparedStatement statement = connection.prepareStatement(FindVisasQuery)) {
-      statement.setLong(1,userId);
-      ResultSet rs =  statement.executeQuery();
+      statement.setLong(1, userId);
+      ResultSet rs = statement.executeQuery();
 
       while (rs.next()) {
         result.add(visaMapper.extractFromResultSet(rs));

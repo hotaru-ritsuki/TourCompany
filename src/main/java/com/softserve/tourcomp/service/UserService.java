@@ -65,7 +65,7 @@ public class UserService {
     ur.setIsAdmin(user.getIsAdmin());
     Countrys country=user.getCountry();
     if (country!= null){
-      ur.setCountry(countryService.countryToCountryResponse(country));
+      ur.setCountry(countryService.findOne(country.getId()));
     }
     List<Visas> list=user.getVisas();
     if (!list.isEmpty()){

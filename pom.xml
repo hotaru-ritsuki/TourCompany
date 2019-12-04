@@ -10,7 +10,7 @@
 
   <name>TourCompany</name>
   <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+<!--  <url>http://www.example.com</url>-->
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -78,13 +78,6 @@
       <version>3.4.1</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>42.2.8</version>
-    </dependency>
-
       <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
       <dependency>
           <groupId>org.projectlombok</groupId>
@@ -92,6 +85,15 @@
           <version>1.18.8</version>
           <scope>provided</scope>
       </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-servlet-api -->
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-servlet-api</artifactId>
+      <version>9.0.12</version>
+    </dependency>
+
+
 
   </dependencies>
 
@@ -149,6 +151,16 @@
           <source>8</source>
           <target>8</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat6-maven-plugin</artifactId>
+        <version>2.2</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.2</version>
       </plugin>
     </plugins>
   </build>
