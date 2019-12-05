@@ -10,7 +10,7 @@ public interface UserDao extends GenericDao<Users>{
 
   Optional<Users> findById(Long usrId);
 
-  Optional<Users> findUserByName(String firstName, String lastName);
+  Optional<Users> findUserByName(String lastName);
 
   List<Users> findUsersByCountryId(Long CountryId);
 
