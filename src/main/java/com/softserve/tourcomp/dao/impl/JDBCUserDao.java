@@ -47,18 +47,12 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
     Users user=new Users(15L,"ЙОбаний","V rot","asasfsfsdf@gmail.com","daosfksdf",true,new Countrys(6L,"Ukraine",new Visas(1L,"sdsf")),new ArrayList());
   jdbcUserDao.create(user);
     System.out.println(user.getId());
-
    System.out.println(jdbcUserDao.findById(3L).get());
     for (Users users: jdbcUserDao.findUsersByCountryId(3L)
          ) {
       System.out.println(users);
-
     }
-
-
     System.out.println(jdbcUserDao.findUserByVisaId(3L));
-
-
    System.out.println(jdbcUserDao.count());
 jdbcUserDao.delete(5L);
    System.out.println(jdbcUserDao.findUserByEmail("sfsfsf").get());
@@ -66,6 +60,7 @@ jdbcUserDao.delete(5L);
 
   }
 */
+
 @Override
 public boolean update(Users user){
   boolean created = false;
@@ -188,7 +183,17 @@ public boolean update(Users user){
 
   @Override
   void setId(Users entity, long Id) throws SQLException {
-entity.setId(Id);
+    entity.setId(Id);
+  }
+
+  @Override
+  void setEntityValues(PreparedStatement statement, Users entity) throws SQLException {
+    statement.setString(1, entity.getFirstName());
+    statement.setString(2, entity.getLastName());
+    statement.setString(3, entity.getEmail());
+    statement.setString(4, entity.getPassword());
+    statement.setBoolean(5, entity.getIsAdmin());
+    statement.setLong(6, entity.getCountry().getId());
   }
 
   @Override
@@ -196,6 +201,7 @@ entity.setId(Id);
     Users extracted = mapper.extractFromResultSet(rs);
     extracted.setCountry(getCountry(extracted.getId()));
     extracted.setVisas(getVisas(extracted.getId()));
+//    extracted.getCountry().setVisa(getVisa(extracted.getCountry().getId()));
     return extracted;
   }
 
@@ -213,15 +219,15 @@ entity.setId(Id);
     }
     return Optional.ofNullable(entity).get();
   }
+
   @Override
   public boolean create(Users entity) {
     boolean created = false;
     try (PreparedStatement statement = connection.prepareStatement(CreateQuery, Statement.RETURN_GENERATED_KEYS)) {
 
-      int affected = insertIntoDb(statement,entity);
+      int affected = insertIntoDb(statement, entity);
       if (affected == 1) {
         setId(entity, getId(entity, statement));
-        insertVisas(entity);
         created = true;
       }
     } catch (Exception ex) {
@@ -231,20 +237,10 @@ entity.setId(Id);
   }
 
   @Override
-  void setEntityValues(PreparedStatement statement, Users entity) throws SQLException {
-    statement.setString(1,entity.getFirstName());
-    statement.setString(2,entity.getLastName());
-    statement.setString(3,entity.getEmail());
-    statement.setString(4,entity.getPassword());
-    statement.setBoolean(5,entity.getIsAdmin());
-    statement.setLong(6,entity.getCountry().getId());
-  }
-
-  @Override
   public boolean delete(long id) {
     boolean affected = false;
     try (PreparedStatement statement = connection.prepareStatement(DeleteQuery)) {
-      affected = transaction(statement,id,this::deleteUsers);
+      affected = transaction(statement, id, this::deleteUsers);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
@@ -258,9 +254,9 @@ entity.setId(Id);
   }
 
   private void insertVisas(Users from) throws SQLException {
-    try (PreparedStatement insertVisas = connection.prepareStatement(createVisasQuery)){
-      insertVisas.setLong(1,from.getId());
-      for(Visas visa: from.getVisas()) {
+    try (PreparedStatement insertVisas = connection.prepareStatement(createVisasQuery)) {
+      insertVisas.setLong(1, from.getId());
+      for (Visas visa : from.getVisas()) {
         insertVisas.setLong(2, visa.getId());
         insertVisas.execute();
       }
@@ -270,6 +266,7 @@ entity.setId(Id);
   private boolean deleteVisas(Users user) throws SQLException {
     return deleteVisas(user.getId());
   }
+
   private boolean deleteVisas(long userId) throws SQLException {
     boolean executed=false;
     try (PreparedStatement statement = connection.prepareStatement(deleteVisasQuery)) {
@@ -279,6 +276,7 @@ entity.setId(Id);
     }
     return executed;
   }
+
   private List<Visas> getVisas(long userId) throws SQLException {
     List<Visas> result = new ArrayList<>();
     try (PreparedStatement statement = connection.prepareStatement(FindVisasQuery)) {

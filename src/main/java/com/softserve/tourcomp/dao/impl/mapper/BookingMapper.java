@@ -12,8 +12,8 @@ public class BookingMapper implements ObjectMapper<Bookings> {
   @Override
   public Bookings extractFromResultSet(ResultSet rs) throws SQLException {
     Bookings booking = new Bookings();
-    HotelMapper hotel=new HotelMapper();
-    UserMapper user=new UserMapper();
+    HotelMapper hotel = new HotelMapper();
+    UserMapper user = new UserMapper();
     booking.setId(rs.getLong("BOOKINGS.id"));
     booking.setAmountRooms(rs.getInt("BOOKINGS.amountRooms"));
     booking.setPrice(rs.getInt("BOOKINGS.price"));
@@ -22,10 +22,9 @@ public class BookingMapper implements ObjectMapper<Bookings> {
     try {
       booking.setHotel(hotel.extractFromResultSet(rs));
       booking.setUser(user.extractFromResultSet(rs));
-    }
-    catch(SQLException e) {
-booking.setHotel(new Hotels());
-booking.setUser(new Users());
+    } catch (SQLException e) {
+      booking.setHotel(new Hotels());
+      booking.setUser(new Users());
     }
     return booking;
   }

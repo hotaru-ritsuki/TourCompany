@@ -55,13 +55,13 @@ public class JDBCCityDao extends JDBCGenericDao<Citys> implements CityDao {
 
   @Override
   void setId(Citys entity, long Id) throws SQLException {
-entity.setId(Id);
+    entity.setId(Id);
   }
 
   @Override
   void setEntityValues(PreparedStatement statement, Citys entity) throws SQLException {
-statement.setString(1,entity.getName());
-statement.setLong(2,entity.getCountry().getId());
+    statement.setString(1, entity.getName());
+    statement.setLong(2, entity.getCountry().getId());
   }
 
   @Override

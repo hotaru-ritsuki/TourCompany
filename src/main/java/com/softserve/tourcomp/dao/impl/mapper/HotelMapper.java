@@ -11,6 +11,7 @@ public class HotelMapper implements ObjectMapper<Hotels> {
 
   @Override
   public Hotels extractFromResultSet(ResultSet rs) throws SQLException {
+
     Hotels hotel=new Hotels();
     CityMapper city=new CityMapper();
     hotel.setId(rs.getLong("HOTELS.id"));

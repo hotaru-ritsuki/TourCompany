@@ -1,6 +1,5 @@
 package com.softserve.tourcomp.dto.user;
 
-import com.softserve.tourcomp.entity.Countrys;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,5 +14,5 @@ public class UserRequest {
   private String lastName;
   private String email;
   private String password;
-  private Countrys country;
+  private Long country;
 }

@@ -31,23 +31,6 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
             new CountryMapper());
   }
 
-  public static void main(String[] args) {
-    JDBCCountryDao jdbcCountryDao = new JDBCDaoFactory().createCountryDao();
-    //jdbcCountryDao.create(new Countrys(5L,"Ukraine",new Visas(1L,"sdsf")));
-    //System.out.println(jdbcCountryDao.findById(6).get());
-    /*for (Countrys country:jdbcCountryDao.findAll()) {
-      System.out.println(country);
-    }
-     */
-    //System.out.println(jdbcCountryDao.count());
-    /*jdbcCountryDao.update(new Countrys(3L,"Poland",new Visas(2L,"updated")));
-    System.out.println(jdbcCountryDao.findById(3L).get());
-  */
-//jdbcCountryDao.delete(6L);
-    //System.out.println(jdbcCountryDao.findByCountryName("Ukraine").get());
-    System.out.println(jdbcCountryDao.findCountryByCityId(2L));
-  }
-
   @Override
   long getId(Countrys entity) {
     return entity.getId();
