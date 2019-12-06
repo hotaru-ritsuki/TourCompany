@@ -28,29 +28,7 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
             new VisaMapper());
   }
 
-  public static void main(String[] args) {
-    JDBCDaoFactory jdbcDaoFactory=new JDBCDaoFactory();
-    JDBCVisaDao jdbcVisaDao=jdbcDaoFactory.createVisaDao();
-    /*Visas visa =new Visas(12L,"wwwwwwolol");
-    System.out.println(jdbcVisaDao.create(visa));
-    System.out.println(visa.getId());
-    */
-    /*
-    //System.out.println(jdbcVisaDao.findById(5L).get());
-     */
-    /*for (Visas visa : jdbcVisaDao.findAll()) {
-      System.out.println(visa);
-    }
-    */
-    //System.out.println(jdbcVisaDao.count());
-    /*System.out.println(jdbcVisaDao.update(new Visas(2L, "updated"))); true
-    System.out.println(jdbcVisaDao.update(new Visas(15L, "insert"))); false
-     */
-   // System.out.println(jdbcVisaDao.delete(12L)); //CONSTRASINTS COUNTRY,CITYS
 
-
-
-  }
 
   @Override
   long getId(Visas entity) {

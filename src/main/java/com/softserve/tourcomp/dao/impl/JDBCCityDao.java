@@ -33,27 +33,6 @@ public class JDBCCityDao extends JDBCGenericDao<Citys> implements CityDao {
             new CityMapper());
   }
 
-  public static void main(String[] args) {
-    JDBCCityDao jdbcCityDao=new JDBCDaoFactory().createCityDao();
-    Citys city = new Citys(1L,"Kyiasdadasd",new Countrys(4L,"sgdfgdfgdfg",new Visas(3L,"heroyam")));
-    /*jdbcCityDao.create(city);
-    city.setName("sdfsgsfgsdfgdsfgsdgsdg");
-    jdbcCityDao.create(city);
-
-    //jdbcCityDao.create(city);
-     */
-/*
-    System.out.println(jdbcCityDao.count());
-    //jdbcCityDao.update(city);
-    //jdbcCityDao.delete(1);
-  //jdbcCityDao.create(city);
-    System.out.println(jdbcCityDao.findByCityName("Kyi").get());
-    /*for (Citys citi:jdbcCityDao.findAll()
-         ) {
-      System.out.println(citi);
-    }
-    */
-  }
   @Override
   long getId(Citys entity) {
     return entity.getId();

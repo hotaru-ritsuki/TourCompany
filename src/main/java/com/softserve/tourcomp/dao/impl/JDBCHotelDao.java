@@ -36,27 +36,6 @@ private JDBCCityDao jdbcCityDao=new JDBCCityDao(connection);
             new HotelMapper());
   }
 
-  public static void main(String[] args) {
-    JDBCHotelDao jdbcHotelDao=new JDBCDaoFactory().createHotelDao();
-    //jdbcHotelDao.create(new Hotels(15L,"asasasd",15,154,"asdasdasdasdas",new Citys(2L,"asdasdasd",new Countrys(2L,"asdasd",new Visas()))));
-    //System.out.println(jdbcHotelDao.findById(5L).get());
-    /*for (Hotels gotel: jdbcHotelDao.findAll()
-         ) {
-      System.out.println(gotel);
-    }
-     */
-    //System.out.println(jdbcHotelDao.count());
-   /* Hotels gotel =jdbcHotelDao.findById(13L).get();
-    gotel.setName("changedsecond");
-    gotel.setPriceNight(228);
-    gotel.setCity(jdbcHotelDao.jdbcCityDao.findById(7L).get());
-    jdbcHotelDao.update(gotel);
-    System.out.println(jdbcHotelDao.findById(13L).get());
-*/
-
-
-  }
-
   @Override
   long getId(Hotels entity) {
     return entity.getId();
