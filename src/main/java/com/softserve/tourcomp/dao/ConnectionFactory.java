@@ -5,6 +5,9 @@ import com.mysql.jdbc.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ *
+ */
 public class ConnectionFactory {
   public static final String URL = "jdbc:mysql://localhost:3306/TourFirm?serverTimezone=UTC";
   public static final String USER = "root";
@@ -15,6 +18,10 @@ public class ConnectionFactory {
   private ConnectionFactory() {
   }
 
+  /**
+   *
+   * @return
+   */
   public static Connection getConnection()
   {
     if(instance == null) {

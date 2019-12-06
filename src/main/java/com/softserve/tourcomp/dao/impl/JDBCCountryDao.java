@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ *
+ */
 public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryDao {
   private final String FindByCountryNameQuery = "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON id_visa = VISAS.id WHERE COUNTRYS.name = ?";
   private final String FindByCityIdQuery = "SELECT * FROM COUNTRYS LEFT JOIN CITYS ON COUNTRYS.id = CITYS.id_country LEFT JOIN VISAS ON id_visa = VISAS.id WHERE CITYS.id = ?";
@@ -31,16 +34,30 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
             new CountryMapper());
   }
 
+  /**
+   * @param entity
+   * @return
+   */
   @Override
   long getId(Countrys entity) {
     return entity.getId();
   }
 
+  /**
+   * @param entity
+   * @param Id
+   * @throws SQLException
+   */
   @Override
   void setId(Countrys entity, long Id) throws SQLException {
     entity.setId(Id);
   }
 
+  /**
+   * @param rs
+   * @return
+   * @throws SQLException
+   */
   @Override
   public Countrys extractEntity(ResultSet rs) throws SQLException {
     VisaMapper visaMapper = new VisaMapper();
@@ -49,12 +66,21 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
     return country;
   }
 
+  /**
+   * @param statement
+   * @param entity
+   * @throws SQLException
+   */
   @Override
   void setEntityValues(PreparedStatement statement, Countrys entity) throws SQLException {
     statement.setString(1, entity.getName());
     statement.setLong(2, entity.getVisa().getId());
   }
 
+  /**
+   * @param countryId
+   * @return
+   */
   @Override
   public boolean delete(long countryId) {
     boolean affected = false;
@@ -69,6 +95,10 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
     return affected;
   }
 
+  /**
+   * @param countryId
+   * @return
+   */
   private boolean deleteAllCitiesRelatedCountry(long countryId) {
     boolean affected = false;
     try (PreparedStatement statement = connection.prepareStatement(deleteAllCitiesRelatedCountry)) {
@@ -80,7 +110,10 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
     return affected;
   }
 
-
+  /**
+   * @param nameCountry
+   * @return
+   */
   @Override
   public Optional<Countrys> findByCountryName(String nameCountry) {
     Countrys entity = null;
@@ -97,6 +130,10 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
     return Optional.ofNullable(entity);
   }
 
+  /**
+   * @param cityId
+   * @return
+   */
   @Override
   public Optional<Countrys> findCountryByCityId(Long cityId) {
     Countrys entity = null;
@@ -112,6 +149,10 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
     return Optional.ofNullable(entity);
   }
 
+  /**
+   * @param visaId
+   * @return
+   */
   @Override
   public List<Countrys> findCountriesByVisaId(Long visaId) {
     List<Countrys> found = null;
@@ -125,6 +166,11 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
     return found;
   }
 
+  /**
+   * @param statement
+   * @return
+   * @throws SQLException
+   */
   @Override
   public List<Countrys> getAllFromStatement(PreparedStatement statement) throws SQLException {
     List<Countrys> entities = new ArrayList<>();
