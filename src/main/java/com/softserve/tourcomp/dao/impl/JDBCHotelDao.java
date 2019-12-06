@@ -1,39 +1,60 @@
 package com.softserve.tourcomp.dao.impl;
 
+import com.softserve.tourcomp.dao.DaoFactory;
 import com.softserve.tourcomp.dao.HotelDao;
 import com.softserve.tourcomp.dao.impl.mapper.CityMapper;
 import com.softserve.tourcomp.dao.impl.mapper.HotelMapper;
 import com.softserve.tourcomp.dao.impl.mapper.ObjectMapper;
 import com.softserve.tourcomp.entity.Citys;
+import com.softserve.tourcomp.entity.Countrys;
 import com.softserve.tourcomp.entity.Hotels;
+import com.softserve.tourcomp.entity.Visas;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class JDBCHotelDao extends JDBCGenericDao<Hotels> implements HotelDao {
-  private final String findHotelsByCityIdQuery = "SELECT * FROM HOTELS WHERE id_city = ?";
-  private final String findHotelsByCountryIdQuery = "SELECT * FROM HOTELS /*/*/*/*/ WHERE id_country = ?";
+  private final String findHotelsByCityIdQuery = "SELECT * FROM HOTELS id_city = ?";
+  private final String findHotelsByCountryIdQuery = "SELECT * FROM HOTELS LEFT JOIN CITYS ON hotels.id_city = citys.id WHERE CITYS.id_country = ?";
   private final String findHotelsByPricePerNightQuery = "SELECT * FROM HOTELS WHERE priceNight > ? AND priceNight < ?";
   private final String findHotelsByLowerPricePerNightQuery = "SELECT * FROM HOTELS WHERE priceNight < ? ";
   private final String findHotelsByHigherPricePerNightQuery = "SELECT * FROM HOTELS WHERE priceNight > ?";
-  private final String findHotelsByNumberOfRoomsQuery = "SELECT * FROM HOTELS WHERE numberRooms = ?";
+  private final String findHotelsByNumberOfRoomsQuery = "SELECT * FROM HOTELS WHERE numberRooms > ?";
   private final String FindByHotelNameQuery = "SELECT * FROM HOTELS WHERE name = ?";
-
+private JDBCCityDao jdbcCityDao=new JDBCCityDao(connection);
   public JDBCHotelDao(Connection connection) {
     super(connection,"INSERT INTO HOTELS (name, numberRooms, id_city, priceNight, discription) VALUES (?,?,?,?,?)",
-            "SELECT * FROM HOTELS LEFT JOIN CITYS ON id_city = CITYS.id LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id WHERE id = ?",
-            "SELECT * FROM HOTELS LEFT JOIN CITYS ON id_city = CITYS.id LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id",
+            "SELECT * FROM HOTELS WHERE id = ?",
+            "SELECT * FROM HOTELS",
             "SELECT COUNT(*) FROM HOTELS",
             "COUNT(*)",
-            "UPDATE HOTELS SET name = ?, numberRooms = ?, id_country = ?, id_city = ?, priceNight = ?, discription = ? WHERE id = ?",
-            7,
+            "UPDATE HOTELS SET name = ?, numberRooms = ?,id_city = ?, priceNight = ?, discription = ? WHERE id = ?",
+            6,
             "DELETE FROM HOTELS WHERE id = ?",
             new HotelMapper());
+  }
+
+  public static void main(String[] args) {
+    JDBCHotelDao jdbcHotelDao=new JDBCDaoFactory().createHotelDao();
+    //jdbcHotelDao.create(new Hotels(15L,"asasasd",15,154,"asdasdasdasdas",new Citys(2L,"asdasdasd",new Countrys(2L,"asdasd",new Visas()))));
+    //System.out.println(jdbcHotelDao.findById(5L).get());
+    /*for (Hotels gotel: jdbcHotelDao.findAll()
+         ) {
+      System.out.println(gotel);
+    }
+     */
+    //System.out.println(jdbcHotelDao.count());
+   /* Hotels gotel =jdbcHotelDao.findById(13L).get();
+    gotel.setName("changedsecond");
+    gotel.setPriceNight(228);
+    gotel.setCity(jdbcHotelDao.jdbcCityDao.findById(7L).get());
+    jdbcHotelDao.update(gotel);
+    System.out.println(jdbcHotelDao.findById(13L).get());
+*/
+
+
   }
 
   @Override
@@ -61,7 +82,7 @@ statement.setString(5,entity.getDiscription());
 
     try (PreparedStatement statement = connection.prepareStatement(findHotelsByCityIdQuery)) {
       statement.setLong(1, cityId);
-      found = getAllFromHotelsStatement(statement);
+      found = getAllFromStatement(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
@@ -90,7 +111,7 @@ statement.setString(5,entity.getDiscription());
 
     try (PreparedStatement statement = connection.prepareStatement(findHotelsByLowerPricePerNightQuery)) {
       statement.setInt(1, pricePerNight);
-      found = getAllFromHotelsStatement(statement);
+      found = getAllFromStatement(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
@@ -103,7 +124,7 @@ statement.setString(5,entity.getDiscription());
 
     try (PreparedStatement statement = connection.prepareStatement(findHotelsByHigherPricePerNightQuery)) {
       statement.setInt(1, pricePerNight);
-      found = getAllFromHotelsStatement(statement);
+      found = getAllFromStatement(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
@@ -117,7 +138,7 @@ statement.setString(5,entity.getDiscription());
     try (PreparedStatement statement = connection.prepareStatement(findHotelsByPricePerNightQuery)) {
       statement.setInt(1, lowerPricePerNight);
       statement.setInt(2, higherPricePerNight);
-      found = getAllFromHotelsStatement(statement);
+      found = getAllFromStatement(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
@@ -130,7 +151,7 @@ statement.setString(5,entity.getDiscription());
 
     try (PreparedStatement statement = connection.prepareStatement(findHotelsByCountryIdQuery)) {
       statement.setLong(1, countryId);
-      found = getAllFromHotelsStatement(statement);
+      found = getAllFromStatement(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
@@ -142,21 +163,28 @@ statement.setString(5,entity.getDiscription());
     List<Hotels> found = null;
 
     try (PreparedStatement statement = connection.prepareStatement(findHotelsByNumberOfRoomsQuery)) {
-      statement.setInt(1, numberOfRooms);
-      found = getAllFromHotelsStatement(statement);
+      statement.setInt(1, numberOfRooms-1);
+      found = getAllFromStatement(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
     return found;
   }
-
-  private List<Hotels> getAllFromHotelsStatement(PreparedStatement statement) throws SQLException {
+@Override
+  public List<Hotels> getAllFromStatement(PreparedStatement statement) throws SQLException {
     ObjectMapper<Hotels> hotelMapper = new HotelMapper();
     List<Hotels> entities = new ArrayList<>();
     ResultSet rs = statement.executeQuery();
     while (rs.next()) {
-      entities.add(hotelMapper.extractFromResultSet(rs));
+      Hotels hotel = hotelMapper.extractFromResultSet(rs);
+      hotel.setCity(jdbcCityDao.findCityByHotelId(hotel.getId()).get());
+      entities.add(hotel);
     }
     return entities;
+  }
+  Hotels extractEntity(ResultSet rs) throws SQLException {
+     Hotels hotel = mapper.extractFromResultSet(rs);
+  hotel.setCity(jdbcCityDao.findCityByHotelId(hotel.getId()).get());
+  return hotel;
   }
 }

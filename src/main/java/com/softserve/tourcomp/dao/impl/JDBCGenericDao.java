@@ -97,7 +97,7 @@ public abstract class JDBCGenericDao<E> implements GenericDao<E> {
     boolean affected = false;
     try (PreparedStatement statement = connection.prepareStatement(DeleteQuery)) {
       statement.setLong(1,id);
-      affected = transaction(statement,this::deleteEntity);
+     affected = deleteEntity(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
