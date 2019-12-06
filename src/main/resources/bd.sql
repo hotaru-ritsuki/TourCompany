@@ -69,7 +69,7 @@ alter table COUNTRYS add foreign key (id_visa) references VISAS(id);
 alter table HOTELS add foreign key (id_country) references COUNTRYS(id);
 alter table HOTELS add foreign key (id_city) references CITYS(id);
 
-alter table BOOKINGS add foreign key (id_user) references USERS (id);
+alter table BOOKINGS add foreign key (id_user) references USERS (id) ON DELETE CASCADE;
 alter table BOOKINGS add foreign key (id_hotel) references HOTELS(id);
 
 alter table USERS_VISAS add foreign key (id_user) references USERS (id);
