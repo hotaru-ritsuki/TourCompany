@@ -13,19 +13,11 @@ public class HotelMapper implements ObjectMapper<Hotels> {
   public Hotels extractFromResultSet(ResultSet rs) throws SQLException {
 
     Hotels hotel=new Hotels();
-    CityMapper city=new CityMapper();
     hotel.setId(rs.getLong("HOTELS.id"));
-    hotel.setDiscription(rs.getString("HOTELS.description"));
+    hotel.setDiscription(rs.getString("HOTELS.discription"));
     hotel.setName(rs.getString("HOTELS.name"));
-    hotel.setNumberRoom(rs.getInt("HOTELS.numberRoom"));
+    hotel.setNumberRoom(rs.getInt("HOTELS.numberRooms"));
     hotel.setPriceNight(rs.getInt("HOTELS.priceNight"));
-    try{
-      Citys cit=city.extractFromResultSet(rs);
-      hotel.setCity(cit);
-    }
-    catch (SQLException excp){
-      hotel.setCity(new Citys());
-    }
     return hotel;
   }
 }

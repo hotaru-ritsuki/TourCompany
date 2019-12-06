@@ -11,7 +11,6 @@ public class VisaMapper implements ObjectMapper<Visas> {
     Visas visa=new Visas();
     visa.setId(rs.getLong("VISAS.id"));
     visa.setName(rs.getString("VISAS.name"));
-    //visa UsERS MANY TO MANY
     return visa;
   }
 }

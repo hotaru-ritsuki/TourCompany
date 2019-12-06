@@ -10,38 +10,69 @@ import com.softserve.tourcomp.entity.Users;
 import com.softserve.tourcomp.entity.Visas;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
+  private CountryMapper countryMapper = new CountryMapper();
+  private VisaMapper visaMapper = new VisaMapper();
   private final String FindUserByEmailQuery = "SELECT * FROM USERS WHERE email = ?";
-  private final String FindUserByIdQuery = "SELECT * FROM USERS WHERE id = ?";
-  private final String FindUserByUsernameQuery = "SELECT * FROM USERS WHERE firstName = ? AND lastName = ?";
-  private final String findUsersByCountryIdQuery = "SELECT * FROM USERS WHERE country_id = ?";
+  private final String FindUserByUsernameQuery = "SELECT * FROM USERS WHERE lastName = ?";
+  private final String findUsersByCountryIdQuery = "SELECT * FROM USERS WHERE id_country = ?";
   private final String findUsersByVisaIdQuery = "SELECT * FROM USERS_VISAS LEFT JOIN USERS ON USERS.id = USERS_VISAS.id_user WHERE id_visa = ?";
   private final String FindUserByBookingIdQuery = "SELECT * FROM BOOKINGS LEFT JOIN USERS ON BOOKINGS.id_user = USERS.id WHERE BOOKINGS.id = ?";
   private final String createVisasQuery = "INSERT INTO USERS_VISAS(id_user, id_visa) VALUES (?,?)";
-  private final String deleteVisasQuery = "DELETE FROM USERS_VISAS WHERE id_visa = ?";
-  private final String FindVisasQuery = "SELECT * FROM USERS LEFT JOIN USERS_VISAS ON USERS.id = id_user LEFT JOIN VISAS ON VISAS.id = id_visa WHERE USERS.id = ?";
-  private CountryMapper countryMapper = new CountryMapper();
-  private VisaMapper visaMapper = new VisaMapper();
-  private final String FindCountryByUserIdQuery = "SELECT * FROM USERS LEFT JOIN COUNTRYS ON USERS.id_country=COUNTRYS.id LEFT JOIN VISAS ON COUNTRYS.id_visa=VISAS.id WHERE USERS.id = ?";
-  private final String FindVisaByCountryIdQuery = "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON COUNTRYS.id_visa=VISAS.id WHERE COUNTRYS.id = ?";
+  private final String deleteVisasQuery = "DELETE FROM USERS_VISAS WHERE id_user = ?";
+  private final String FindVisasQuery = "SELECT * FROM USERS_VISAS LEFT JOIN VISAS ON VISAS.id = id_visa WHERE id_user = ?";
+  private final String FindCountryByUserIdQuery = "SELECT * FROM USERS LEFT JOIN COUNTRYS ON USERS.id_country=COUNTRYS.id WHERE USERS.id = ?";
 
   public JDBCUserDao(Connection connection) {
-    super(connection, "INSERT INTO USERS (firstName, lastName, email, password, isAdmin, id_country) VALUES (?, ?, ?, ?, ?, ?);",
-          "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id LEFT JOIN VISAS ON id_visa=VISAS.id WHERE id = ?",
-          "SELECT * FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id LEFT JOIN VISAS ON COUNTRYS.id_visa=VISAS.id",
-          "SELECT COUNT(*) FROM USERS LEFT JOIN COUNTRYS ON id_country = COUNTRYS.id",
-          "COUNT(*)",
-          "UPDATE USERS SET firstName = ?, lastName = ?, email = ?, password = ?, isAdmin = ?, id_country = ? WHERE id = ?",
-          7,
-          "DELETE FROM USERS WHERE id = ?",
-          new UserMapper());
+    super(connection,"INSERT INTO USERS (firstName, lastName, email, password, isAdmin, id_country) VALUES (?, ?, ?, ?, ?, ?);",
+            "SELECT * FROM USERS WHERE id = ?",
+            "SELECT * FROM USERS ",
+            "SELECT COUNT(*) FROM USERS ",
+            "COUNT(*)",
+            "UPDATE USERS SET firstName = ?, lastName = ?, email = ?, password = ?, isAdmin = ?, id_country = ? WHERE id = ?",
+            7,
+            "DELETE FROM USERS WHERE id = ?",
+            new UserMapper());
   }
 
+ /* public static void main(String[] args) {
+   JDBCDaoFactory jdbcDaoFactory =  new JDBCDaoFactory();
+    JDBCUserDao jdbcUserDao=jdbcDaoFactory.createUserDao();
+    List<Visas> visas= new ArrayList();
+    visas.add(new Visas(1L,"sdsf"));
+    Users user=new Users(15L,"ЙОбаний","V rot","asasfsfsdf@gmail.com","daosfksdf",true,new Countrys(6L,"Ukraine",new Visas(1L,"sdsf")),new ArrayList());
+  jdbcUserDao.create(user);
+    System.out.println(user.getId());
+   System.out.println(jdbcUserDao.findById(3L).get());
+    for (Users users: jdbcUserDao.findUsersByCountryId(3L)
+         ) {
+      System.out.println(users);
+    }
+    System.out.println(jdbcUserDao.findUserByVisaId(3L));
+   System.out.println(jdbcUserDao.count());
+jdbcUserDao.delete(5L);
+   System.out.println(jdbcUserDao.findUserByEmail("sfsfsf").get());
+    System.out.println(jdbcUserDao.findUserByName("gxgx").get());
+
+  }
+*/
+
+@Override
+public boolean update(Users user){
+  boolean created = false;
+  try (PreparedStatement statement = connection.prepareStatement(UpdateQuery)){
+    deleteVisas(user);
+    created = updateAction(statement,user);
+    insertVisas(user);
+  } catch (Exception ex) {
+    ex.printStackTrace();
+  }
+  return created;
+}
   @Override
   public Optional<Users> findUserByEmail(String email) {
     Users entity = null;
@@ -62,7 +93,7 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
   public Optional<Users> findById(Long usrId) {
     Users entity = null;
 
-    try (PreparedStatement statement = connection.prepareStatement(FindUserByIdQuery)) {
+    try (PreparedStatement statement = connection.prepareStatement(FindByIDQuery)) {
       statement.setLong(1, usrId);
       ResultSet result = statement.executeQuery();
       if (result.next()) {
@@ -74,13 +105,11 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
     return Optional.ofNullable(entity);
   }
 
-  @Override
-  public Optional<Users> findUserByName(String firstName, String lastName) {
+  public Optional<Users> findUserByName(String lastName) {
     Users entity = null;
 
     try (PreparedStatement statement = connection.prepareStatement(FindUserByUsernameQuery)) {
-      statement.setString(1, firstName);
-      statement.setString(2, lastName);
+      statement.setString(1, lastName);
       ResultSet result = statement.executeQuery();
       if (result.next()) {
         entity = extractEntity(result);
@@ -97,19 +126,23 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
 
     try (PreparedStatement statement = connection.prepareStatement(findUsersByCountryIdQuery)) {
       statement.setLong(1, countryId);
-      found = getAllFromUsersStatement(statement);
+      found = getAllFromStatement(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
     return found;
   }
 
-  private List<Users> getAllFromUsersStatement(PreparedStatement statement) throws SQLException {
+  @Override
+  public List<Users> getAllFromStatement(PreparedStatement statement) throws SQLException {
     ObjectMapper<Users> userMapper = new UserMapper();
     List<Users> entities = new ArrayList<>();
     ResultSet rs = statement.executeQuery();
     while (rs.next()) {
-      entities.add(userMapper.extractFromResultSet(rs));
+      Users extracted =userMapper.extractFromResultSet(rs);
+      extracted.setCountry(getCountry(extracted.getId()));
+      extracted.setVisas(getVisas(extracted.getId()));
+      entities.add(extracted);
     }
     return entities;
   }
@@ -136,7 +169,7 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
 
     try (PreparedStatement statement = connection.prepareStatement(findUsersByVisaIdQuery)) {
       statement.setLong(1, visaId);
-      found = getAllFromUsersStatement(statement);
+      found = getAllFromStatement(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
@@ -166,13 +199,13 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
   @Override
   Users extractEntity(ResultSet rs) throws SQLException {
     Users extracted = mapper.extractFromResultSet(rs);
+    extracted.setCountry(getCountry(extracted.getId()));
     extracted.setVisas(getVisas(extracted.getId()));
-    extracted.setCountry(getCountrys(extracted.getId()));
 //    extracted.getCountry().setVisa(getVisa(extracted.getCountry().getId()));
     return extracted;
   }
 
-  private Countrys getCountrys(Long id) {
+  private Countrys getCountry(Long id) {
     Countrys entity = null;
 
     try (PreparedStatement statement = connection.prepareStatement(FindCountryByUserIdQuery)) {
@@ -186,7 +219,6 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
     }
     return Optional.ofNullable(entity).get();
   }
-
 
   @Override
   public boolean create(Users entity) {
@@ -226,24 +258,30 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
       insertVisas.setLong(1, from.getId());
       for (Visas visa : from.getVisas()) {
         insertVisas.setLong(2, visa.getId());
-        insertVisas.executeUpdate();
+        insertVisas.execute();
       }
     }
   }
 
-  private void deleteVisas(long userId) throws SQLException {
+  private boolean deleteVisas(Users user) throws SQLException {
+    return deleteVisas(user.getId());
+  }
+
+  private boolean deleteVisas(long userId) throws SQLException {
+    boolean executed=false;
     try (PreparedStatement statement = connection.prepareStatement(deleteVisasQuery)) {
       statement.setLong(1, userId);
       statement.execute();
+      executed=true;
     }
+    return executed;
   }
 
   private List<Visas> getVisas(long userId) throws SQLException {
     List<Visas> result = new ArrayList<>();
     try (PreparedStatement statement = connection.prepareStatement(FindVisasQuery)) {
-      statement.setLong(1, userId);
-      ResultSet rs = statement.executeQuery();
-
+      statement.setLong(1,userId);
+      ResultSet rs =  statement.executeQuery();
       while (rs.next()) {
         result.add(visaMapper.extractFromResultSet(rs));
       }
