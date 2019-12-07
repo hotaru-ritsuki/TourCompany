@@ -2,7 +2,6 @@ package com.softserve.tourcomp.dao.impl;
 
 import com.softserve.tourcomp.dao.BookingDao;
 import com.softserve.tourcomp.dao.impl.mapper.BookingMapper;
-import com.softserve.tourcomp.dao.impl.mapper.ObjectMapper;
 import com.softserve.tourcomp.entity.Bookings;
 
 import java.sql.*;
@@ -13,15 +12,16 @@ import java.util.List;
 public class JDBCBookingDao extends JDBCGenericDao<Bookings> implements BookingDao {
   private final String findBookingsByUserEmailQuery = "SELECT * FROM BOOKINGS LEFT JOIN USERS ON USERS.Id = BOOKINGS.id_user WHERE USERS.email = ?";
   private final String findBookingsByUserIdQuery = "SELECT * FROM BOOKINGS WHERE id_user = ?";
-  private final String findBookingsByUserIdAndDatesQuery = "SELECT * FROM BOOKINGS LEFT JOIN USERS ON USERS.Id = BOOKINGS.id_user WHERE USERS.id = ?";
-  private final String findBookingsByHotelId = "";
-  private final String findBookingsByHotelIdAndDateS = "";
-  private final String findBookingsByCityId = "";
-  private final String findBookingsByCityAndDates = "";
-  private final String findBookingsByCountryIdQuery = "";
-  private final String findBookingsByCountryIdAndDatesFromQuery = "";
+  private final String findBookingsByHotelIdQuery = "SELECT * FROM BOOKINGS WHERE id_hotel = ?";
+  private final String findBookingsByCityIdQuery = "SELECT * FROM BOOKINGS LEFT JOIN HOTELS ON bookings.id_hotel = hotels.id WHERE id_city = ?";
+  private final String findBookingsByCountryIdQuery = "SELECT * FROM BOOKINGS LEFT JOIN HOTELS ON bookings.id_hotel = hotels.id LEFT JOIN CITYS ON hotels.id_city = citys.id WHERE id_country = ?";
+  private final String findBookingsByDatesQuery = "SELECT * FROM bookings where (startDate <= ? and endDate >= ?) or (startDate BETWEEN ? AND ?) or (endDate between ? and ?);";
+  private final String CountBookedRoomsQuery = "SELECT SUM(bookings.amountRooms) FROM BOOKINGS WHERE id_hotel = ? ";
+  private final String byDatesQuery = " AND ((startDate <= ? and endDate >= ?) or (startDate BETWEEN ? AND ?) or (endDate between ? and ?))";
+  private final String averageBookingTimeQuery = "SELECT AVG(DATEDIFF(bookings.endDate,bookings.startDate)) FROM BOOKINGS WHERE BOOKINGS.id = ?";
   private JDBCHotelDao jdbcHotelDao = new JDBCHotelDao(connection);
   private JDBCUserDao jdbcUserDao = new JDBCUserDao(connection);
+
 
   public JDBCBookingDao(Connection connection) {
     super(connection, "INSERT INTO BOOKINGS(startDate, endDate, amountRooms, price, id_user, id_hotel) VALUES(?, ?, ?, ?, ?, ?)",
@@ -33,102 +33,6 @@ public class JDBCBookingDao extends JDBCGenericDao<Bookings> implements BookingD
             7,
             "DELETE FROM BOOKINGS WHERE id = ?",
             new BookingMapper());
-  }
-
-  public static void main(String[] args) {
-    JDBCDaoFactory jdbcDaoFactory = new JDBCDaoFactory();
-    JDBCBookingDao jdbcBookingDao = jdbcDaoFactory.createBookingDao();
-    Bookings book = jdbcBookingDao.findById(6L).get();
-/*    System.out.println("Before :"+ book);
-book.setHotel(jdbcDaoFactory.createHotelDao().findById(17L).get());
-book.setUser(jdbcDaoFactory.createUserDao().findById(14L).get());
-jdbcBookingDao.update(book);
-book=jdbcBookingDao.findById(6L).get();
-    System.out.println("After :"+ book);
-*/
-   /*for (Bookings bookker:
-    jdbcBookingDao.findBookingsByUserId(7L)
-) {
-      System.out.println(bookker);
-    }
-*/
-
-  }
-
-  /**
-   * @param email
-   * @return
-   */
-  @Override
-  public List<Bookings> findByUserEmail(String email) {
-    List<Bookings> found = null;
-
-    try (PreparedStatement statement = connection.prepareStatement(findBookingsByUserEmailQuery)) {
-      statement.setString(1, email);
-      found = getAllFromStatement(statement);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    return found;
-  }
-
-  /**
-   * @param statement
-   * @return
-   * @throws SQLException
-   */
-  @Override
-  public List<Bookings> getAllFromStatement(PreparedStatement statement) throws SQLException {
-    ObjectMapper<Bookings> bookingMapper = new BookingMapper();
-    List<Bookings> entities = new ArrayList<>();
-    ResultSet rs = statement.executeQuery();
-    while (rs.next()) {
-      Bookings book = extractEntity(rs);
-      book.setHotel(jdbcHotelDao.findHotelByBookingId(book.getId()).get());
-      book.setUser(jdbcUserDao.findUserByBookingId(book.getId()).get());
-      entities.add(book);
-    }
-    return entities;
-  }
-
-  /**
-   * @param rs
-   * @return
-   * @throws SQLException
-   */
-  @Override
-  public Bookings extractEntity(ResultSet rs) throws SQLException {
-    Bookings book = mapper.extractFromResultSet(rs);
-    book.setHotel(jdbcHotelDao.findHotelByBookingId(book.getId()).get());
-    book.setUser(jdbcUserDao.findUserByBookingId(book.getId()).get());
-    return book;
-  }
-
-  /**
-   * @param userId
-   * @return
-   */
-  @Override
-  public List<Bookings> findBookingsByUserId(Long userId) {
-    List<Bookings> found = null;
-
-    try (PreparedStatement statement = connection.prepareStatement(findBookingsByUserIdQuery)) {
-      statement.setLong(1, userId);
-      found = getAllFromStatement(statement);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    return found;
-  }
-
-  @Override
-  public List<Bookings> findBookingsByDates(LocalDate fromDate, LocalDate endDate) {
-    return null;
-  }
-
-  @Override
-  public List<Bookings> findBookingsByHotelId(Long hotelId) {
-    return null;
   }
 
   /**
@@ -151,6 +55,39 @@ book=jdbcBookingDao.findById(6L).get();
   }
 
   /**
+   * Auxiliary method to extract entity from result with multiple rows
+   *
+   * @param statement Input statement
+   * @return Returns a list of bookings from defined statement
+   * @throws SQLException
+   */
+  @Override
+  public List<Bookings> getAllFromStatement(PreparedStatement statement) throws SQLException {
+    List<Bookings> entities = new ArrayList<>();
+    ResultSet rs = statement.executeQuery();
+    while (rs.next()) {
+      Bookings book = extractEntity(rs);
+      entities.add(book);
+    }
+    return entities;
+  }
+
+  /**
+   * Extrqcts entity from ResultSet
+   *
+   * @param rs ResultSet
+   * @return Returns Booking
+   * @throws SQLException
+   */
+  @Override
+  public Bookings extractEntity(ResultSet rs) throws SQLException {
+    Bookings book = mapper.extractFromResultSet(rs);
+    book.setHotel(jdbcHotelDao.findHotelByBookingId(book.getId()).get());
+    book.setUser(jdbcUserDao.findUserByBookingId(book.getId()).get());
+    return book;
+  }
+
+  /**
    * @param statement
    * @param entity
    * @throws SQLException
@@ -165,14 +102,106 @@ book=jdbcBookingDao.findById(6L).get();
     statement.setLong(6, entity.getHotel().getId());
   }
 
+  /**
+   * Find the user by email.
+   *
+   * @param email String of email
+   * @return Returns list of bookings by user with defined email
+   */
+  @Override
+  public List<Bookings> findByUserEmail(String email) {
+    List<Bookings> found = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(findBookingsByUserEmailQuery)) {
+      statement.setString(1, email);
+      found = getAllFromStatement(statement);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return found;
+  }
+
+  /**
+   * Finds bookings by user_id
+   *
+   * @param userId
+   * @return Returns list of bookings with defined user_id
+   */
+  @Override
+  public List<Bookings> findBookingsByUserId(Long userId) {
+    List<Bookings> found = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(findBookingsByUserIdQuery)) {
+      statement.setLong(1, userId);
+      found = getAllFromStatement(statement);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return found;
+  }
+
+  /**
+   *
+   * @param fromDate
+   * @param endDate
+   * @return
+   */
+  @Override
+  public List<Bookings> findBookingsByDates(LocalDate fromDate, LocalDate endDate) {
+    List<Bookings> found = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(findBookingsByDatesQuery)) {
+      statement.setDate(1, Date.valueOf(fromDate));
+      statement.setDate(3, Date.valueOf(fromDate));
+      statement.setDate(5, Date.valueOf(fromDate));
+      statement.setDate(2, Date.valueOf(endDate));
+      statement.setDate(4, Date.valueOf(endDate));
+      statement.setDate(6, Date.valueOf(endDate));
+
+      found = getAllFromStatement(statement);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return found;
+  }
+
+  /**
+   *
+   * @param hotelId
+   * @return
+   */
+  @Override
+  public List<Bookings> findBookingsByHotelId(Long hotelId) {
+    List<Bookings> found = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(findBookingsByHotelIdQuery)) {
+      statement.setLong(1, hotelId);
+      found = getAllFromStatement(statement);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return found;
+  }
+
+  /**
+   *
+   * @param hotelId
+   * @param fromDate
+   * @param endDate
+   * @return
+   */
   @Override
   public List<Bookings> findBookingsByHotelId(Long hotelId, LocalDate fromDate, LocalDate endDate) {
     List<Bookings> found = null;
 
-    try (PreparedStatement statement = connection.prepareStatement(findBookingsByHotelIdAndDateS)) {
+    try (PreparedStatement statement = connection.prepareStatement(findBookingsByHotelIdQuery + byDatesQuery)) {
       statement.setLong(1, hotelId);
       statement.setDate(2, Date.valueOf(fromDate));
       statement.setDate(3, Date.valueOf(endDate));
+      statement.setDate(4, Date.valueOf(fromDate));
+      statement.setDate(5, Date.valueOf(endDate));
+      statement.setDate(6, Date.valueOf(fromDate));
+      statement.setDate(7, Date.valueOf(endDate));
       found = getAllFromStatement(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -180,12 +209,73 @@ book=jdbcBookingDao.findById(6L).get();
     return found;
   }
 
+  /**
+   *
+   * @param hotelId
+   * @param fromDate
+   * @param endDate
+   * @return
+   */
   @Override
-  public List<Bookings> findBookingsByCityId(Long hotelId) {
+  public Integer countBookedRooms(Long hotelId, LocalDate fromDate, LocalDate endDate) {
+    Integer count=0;
+    try (PreparedStatement statement = connection.prepareStatement(CountBookedRoomsQuery + byDatesQuery)) {
+      statement.setLong(1, hotelId);
+      statement.setDate(2, Date.valueOf(fromDate));
+      statement.setDate(3, Date.valueOf(endDate));
+      statement.setDate(4, Date.valueOf(fromDate));
+      statement.setDate(5, Date.valueOf(endDate));
+      statement.setDate(6, Date.valueOf(fromDate));
+      statement.setDate(7, Date.valueOf(endDate));
+      ResultSet result = statement.executeQuery();
+      if (result.next()) {
+        count = result.getInt(1);
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    finally{
+      return count;
+    }
+  }
+
+  public static void main(String[] args) {
+    JDBCDaoFactory jdbcDaoFactory = new JDBCDaoFactory();
+    JDBCBookingDao jdbcBookingDao = jdbcDaoFactory.createBookingDao();
+    Bookings book = jdbcBookingDao.findById(6L).get();
+   /*System.out.println("Before :"+ book);
+book.setHotel(jdbcDaoFactory.createHotelDao().findById(13L).get());
+book.setUser(jdbcDaoFactory.createUserDao().findById(14L).get());
+jdbcBookingDao.update(book);
+book=jdbcBookingDao.findById(6L).get();
+    System.out.println("After :"+ book);
+
+    book.setHotel(jdbcDaoFactory.createHotelDao().findById(15L).get());
+    jdbcBookingDao.update(book);
+    book=jdbcBookingDao.findById(6L).get();
+    System.out.println("After :"+ book);
+*//*
+   for (Bookings bookker:jdbcBookingDao.findBookingsByHotelId(10L,LocalDate.of(2015,2,1),LocalDate.of(2015,9,30))
+) {
+      System.out.println(bookker);
+    }
+
+    System.out.println(jdbcBookingDao.countBookedRooms(10L,LocalDate.of(2015,2,1),LocalDate.of(2015,9,30)));
+*/
+
+  }
+
+  /**
+   *
+   * @param cityId
+   * @return
+   */
+  @Override
+  public List<Bookings> findBookingsByCityId(Long cityId) {
     List<Bookings> found = null;
 
-    try (PreparedStatement statement = connection.prepareStatement(findBookingsByCityId)) {
-      statement.setLong(1, hotelId);
+    try (PreparedStatement statement = connection.prepareStatement(findBookingsByCityIdQuery)) {
+      statement.setLong(1, cityId);
       found = getAllFromStatement(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -193,11 +283,37 @@ book=jdbcBookingDao.findById(6L).get();
     return found;
   }
 
+  /**
+   *
+   * @param cityId
+   * @param fromDate
+   * @param endDate
+   * @return
+   */
   @Override
   public List<Bookings> findBookingsByCityId(Long cityId, LocalDate fromDate, LocalDate endDate) {
-    return null;
+    List<Bookings> found = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(findBookingsByCityIdQuery + byDatesQuery)) {
+      statement.setLong(1, cityId);
+      statement.setDate(2, Date.valueOf(fromDate));
+      statement.setDate(3, Date.valueOf(endDate));
+      statement.setDate(4, Date.valueOf(fromDate));
+      statement.setDate(5, Date.valueOf(endDate));
+      statement.setDate(6, Date.valueOf(fromDate));
+      statement.setDate(7, Date.valueOf(endDate));
+      found = getAllFromStatement(statement);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return found;
   }
 
+  /**
+   *
+   * @param countryId
+   * @return
+   */
   @Override
   public List<Bookings> findBookingsByCountryId(Long countryId) {
     List<Bookings> found = null;
@@ -211,25 +327,46 @@ book=jdbcBookingDao.findById(6L).get();
     return found;
   }
 
-  @Override
-  public int countBookedRooms(Long hotelId, LocalDate fromDate, LocalDate endDate) {
-    return 0;
-  }
-
+  /**
+   *
+   * @param countryId
+   * @param fromDate
+   * @param endDate
+   * @return
+   */
   @Override
   public List<Bookings> findBookingsByCountryId(Long countryId, LocalDate fromDate, LocalDate endDate) {
     List<Bookings> found = null;
 
-    try (PreparedStatement statement = connection.prepareStatement(findBookingsByCountryIdAndDatesFromQuery)) {
+    try (PreparedStatement statement = connection.prepareStatement(findBookingsByCountryIdQuery + byDatesQuery)) {
       statement.setLong(1, countryId);
       statement.setDate(2, Date.valueOf(fromDate));
       statement.setDate(3, Date.valueOf(endDate));
+      statement.setDate(4, Date.valueOf(fromDate));
+      statement.setDate(5, Date.valueOf(endDate));
+      statement.setDate(6, Date.valueOf(fromDate));
+      statement.setDate(7, Date.valueOf(endDate));
       found = getAllFromStatement(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
     return found;
   }
-
+@Override
+  public Double averageBookingTime(Long hotelId){
+  Double count=0.0;
+  try (PreparedStatement statement = connection.prepareStatement(averageBookingTimeQuery)) {
+    statement.setLong(1, hotelId);
+    ResultSet result = statement.executeQuery();
+    if (result.next()) {
+      count = result.getDouble(1);
+    }
+  } catch (Exception ex) {
+    ex.printStackTrace();
+  }
+  finally{
+    return count;
+  }
+}
 
 }

@@ -86,6 +86,12 @@ public interface BookingDao extends GenericDao<Bookings>{
    * @param endDate
    * @return
    */
-  int countBookedRooms(Long hotelId,LocalDate fromDate,LocalDate endDate);
+  Integer countBookedRooms(Long hotelId,LocalDate fromDate,LocalDate endDate);
 
+  /**
+   *
+   * @param hotelId
+   * @return
+   */
+  Double averageBookingTime(Long hotelId);
 }
