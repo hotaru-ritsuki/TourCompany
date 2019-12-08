@@ -2,8 +2,9 @@ package com.softserve.tourcomp.dao.impl;
 
 import com.softserve.tourcomp.dao.HotelDao;
 import com.softserve.tourcomp.dao.impl.mapper.HotelMapper;
-import com.softserve.tourcomp.dao.impl.mapper.ObjectMapper;
+import com.softserve.tourcomp.dao.impl.mapper.stats.HotelStatsMapper;
 import com.softserve.tourcomp.entity.Hotels;
+import com.softserve.tourcomp.entity.stats.HotelStats;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,14 +18,16 @@ import java.util.Optional;
  *
  */
 public class JDBCHotelDao extends JDBCGenericDao<Hotels> implements HotelDao {
-  private final String findHotelsByCityIdQuery = "SELECT * FROM HOTELS id_city = ?";
-  private final String findHotelsByCountryIdQuery = "SELECT * FROM HOTELS LEFT JOIN CITYS ON hotels.id_city = citys.id WHERE CITYS.id_country = ?";
+  private final String findHotelsByCityIdQuery = "SELECT * FROM HOTELS WHERE id_city = ?";
+  private final String FindByHotelNameQuery = "SELECT * FROM HOTELS WHERE name = ?";
+  private final String findHotelsByNumberOfRoomsQuery = "SELECT * FROM HOTELS WHERE numberRooms >= ?";
   private final String findHotelsByPricePerNightQuery = "SELECT * FROM HOTELS WHERE priceNight > ? AND priceNight < ?";
   private final String findHotelsByLowerPricePerNightQuery = "SELECT * FROM HOTELS WHERE priceNight < ? ";
   private final String findHotelsByHigherPricePerNightQuery = "SELECT * FROM HOTELS WHERE priceNight > ?";
-  private final String findHotelsByNumberOfRoomsQuery = "SELECT * FROM HOTELS WHERE numberRooms > ?";
-  private final String FindByHotelNameQuery = "SELECT * FROM HOTELS WHERE name = ?";
+  private final String findHotelsByCountryIdQuery = "SELECT * FROM HOTELS LEFT JOIN CITYS ON hotels.id_city = citys.id WHERE CITYS.id_country = ?";
   private final String FindByBookingIdQuery = "SELECT * FROM BOOKINGS LEFT JOIN HOTELS ON bookings.id_hotel = hotels.id WHERE BOOKINGS.id = ?";
+  private final String getStatisticsQuery = "SELECT hotels.id, hotels.name, COUNT(bookings.id_user) AS count_users, AVG(DATEDIFF(endDate, startDate)) AS average_booking_time FROM hotels INNER JOIN bookings "+
+                         "ON hotels.id = bookings.id_hotel GROUP BY hotels.id";
   private JDBCCityDao jdbcCityDao = new JDBCCityDao(connection);
 
   public JDBCHotelDao(Connection connection) {
@@ -57,7 +60,11 @@ public class JDBCHotelDao extends JDBCGenericDao<Hotels> implements HotelDao {
     System.out.println(jdbcHotelDao.findById(13L).get());
 */
 
-    System.out.println(jdbcHotelDao.findHotelByBookingId(4L).get());
+    //System.out.println(jdbcHotelDao.findHotelByBookingId(4L).get());
+    for (HotelStats hs:jdbcHotelDao.createStatistics()
+         ) {
+      System.out.println(hs);
+    }
   }
 
   /**
@@ -228,7 +235,7 @@ public class JDBCHotelDao extends JDBCGenericDao<Hotels> implements HotelDao {
     List<Hotels> found = null;
 
     try (PreparedStatement statement = connection.prepareStatement(findHotelsByNumberOfRoomsQuery)) {
-      statement.setInt(1, numberOfRooms - 1);
+      statement.setInt(1, numberOfRooms);
       found = getAllFromStatement(statement);
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -243,11 +250,10 @@ public class JDBCHotelDao extends JDBCGenericDao<Hotels> implements HotelDao {
    */
   @Override
   public List<Hotels> getAllFromStatement(PreparedStatement statement) throws SQLException {
-    ObjectMapper<Hotels> hotelMapper = new HotelMapper();
     List<Hotels> entities = new ArrayList<>();
     ResultSet rs = statement.executeQuery();
     while (rs.next()) {
-      Hotels hotel = hotelMapper.extractFromResultSet(rs);
+      Hotels hotel = mapper.extractFromResultSet(rs);
       hotel.setCity(jdbcCityDao.findCityByHotelId(hotel.getId()).get());
       entities.add(hotel);
     }
@@ -263,5 +269,21 @@ public class JDBCHotelDao extends JDBCGenericDao<Hotels> implements HotelDao {
     Hotels hotel = mapper.extractFromResultSet(rs);
     hotel.setCity(jdbcCityDao.findCityByHotelId(hotel.getId()).get());
     return hotel;
+  }
+
+  @Override
+  public List<HotelStats> createStatistics() {
+    List<HotelStats> found = new ArrayList<>();
+    HotelStatsMapper hotelStatsMapper = new HotelStatsMapper();
+    try (PreparedStatement statement = connection.prepareStatement(getStatisticsQuery)) {
+      ResultSet rs = statement.executeQuery();
+      while (rs.next()) {
+        HotelStats hotelStats = hotelStatsMapper.extractFromResultSet(rs);
+        found.add(hotelStats);
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return found;
   }
 }

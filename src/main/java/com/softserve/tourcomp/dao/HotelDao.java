@@ -1,6 +1,7 @@
 package com.softserve.tourcomp.dao;
 
 import com.softserve.tourcomp.entity.Hotels;
+import com.softserve.tourcomp.entity.stats.HotelStats;
 
 import java.util.List;
 import java.util.Optional;
@@ -65,4 +66,10 @@ public interface HotelDao extends GenericDao<Hotels>{
    * @return
    */
   List<Hotels> findHotelsByNumberOfRooms(Integer numberOfRooms);
+
+  /**
+   *
+   * @return
+   */
+  List<HotelStats> createStatistics();
 }
