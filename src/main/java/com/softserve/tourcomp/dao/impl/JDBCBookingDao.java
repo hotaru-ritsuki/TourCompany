@@ -8,6 +8,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JDBCBookingDao extends JDBCGenericDao<Bookings> implements BookingDao {
   private final String findBookingsByUserEmailQuery = "SELECT * FROM BOOKINGS LEFT JOIN USERS ON USERS.Id = BOOKINGS.id_user WHERE USERS.email = ?";
@@ -335,4 +336,19 @@ public class JDBCBookingDao extends JDBCGenericDao<Bookings> implements BookingD
     }
   }
 
+  @Override
+  public Optional<Bookings> findById(Long bookingId) {
+    Bookings entity = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(FindByIDQuery)) {
+      statement.setLong(1, bookingId);
+      ResultSet result = statement.executeQuery();
+      if (result.next()) {
+        entity = extractEntity(result);
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return Optional.ofNullable(entity);
+  }
 }

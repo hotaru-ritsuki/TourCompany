@@ -58,7 +58,6 @@ public abstract class JDBCGenericDao<E> implements GenericDao<E> {
    * @param id
    * @return
    */
-  @Override
   public Optional<E> findById(long id) {
     E entity = null;
 

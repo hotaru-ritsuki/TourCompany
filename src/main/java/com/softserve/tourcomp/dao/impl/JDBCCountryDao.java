@@ -77,6 +77,22 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
     statement.setLong(2, entity.getVisa().getId());
   }
 
+  @Override
+  public Optional<Countrys> findById(Long id) {
+    Countrys entity = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(FindByIDQuery)) {
+      statement.setLong(1, id);
+      ResultSet result = statement.executeQuery();
+      if (result.next()) {
+        entity = extractEntity(result);
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return Optional.ofNullable(entity);
+  }
+
   /**
    * @param countryId
    * @return

@@ -17,7 +17,6 @@ public class CityMapper implements ObjectMapper<Citys> {
   @Override
   public Citys extractFromResultSet(ResultSet rs) throws SQLException {
     Citys city = new Citys();
-    CountryMapper country = new CountryMapper();
     city.setId(rs.getLong("CITYS.id"));
     city.setName(rs.getString("CITYS.name"));
     return city;

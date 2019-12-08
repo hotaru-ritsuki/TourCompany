@@ -153,4 +153,19 @@ public class JDBCCityDao extends JDBCGenericDao<Citys> implements CityDao {
     return city;
   }
 
+  @Override
+  public Optional<Citys> findById(Long id) {
+    Citys entity = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(FindByIDQuery)) {
+      statement.setLong(1, id);
+      ResultSet result = statement.executeQuery();
+      if (result.next()) {
+        entity = extractEntity(result);
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return Optional.ofNullable(entity);
+  }
 }

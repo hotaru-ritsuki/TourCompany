@@ -1,6 +1,8 @@
 package com.softserve.tourcomp.dao;
 
 import com.softserve.tourcomp.entity.Users;
+import com.softserve.tourcomp.entity.stats.UserStats;
+
 import java.util.Optional;
 import java.util.List;
 
@@ -49,4 +51,10 @@ public interface UserDao extends GenericDao<Users>{
    * @return
    */
   List<Users> findUserByVisaId(Long visaId);
+
+  /**
+   *
+   * @return
+   */
+  List<UserStats> createStatistics();
 }

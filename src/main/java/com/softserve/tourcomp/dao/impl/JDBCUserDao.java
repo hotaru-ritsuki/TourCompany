@@ -1,18 +1,14 @@
 package com.softserve.tourcomp.dao.impl;
 
 import com.softserve.tourcomp.dao.UserDao;
-import com.softserve.tourcomp.dao.impl.mapper.CountryMapper;
-import com.softserve.tourcomp.dao.impl.mapper.ObjectMapper;
-import com.softserve.tourcomp.dao.impl.mapper.UserMapper;
-import com.softserve.tourcomp.dao.impl.mapper.VisaMapper;
-import com.softserve.tourcomp.entity.Countrys;
-import com.softserve.tourcomp.entity.Users;
-import com.softserve.tourcomp.entity.Visas;
+import com.softserve.tourcomp.dao.impl.mapper.*;
+import com.softserve.tourcomp.dao.impl.mapper.stats.HotelStatsMapper;
+import com.softserve.tourcomp.dao.impl.mapper.stats.UserStatsMapper;
+import com.softserve.tourcomp.entity.*;
+import com.softserve.tourcomp.entity.stats.UserStats;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  *
@@ -27,6 +23,11 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
   private final String deleteVisasQuery = "DELETE FROM USERS_VISAS WHERE id_user = ?";
   private final String FindVisasQuery = "SELECT * FROM USERS_VISAS LEFT JOIN VISAS ON VISAS.id = id_visa WHERE id_user = ?";
   private final String FindCountryByUserIdQuery = "SELECT * FROM USERS LEFT JOIN COUNTRYS ON USERS.id_country=COUNTRYS.id WHERE USERS.id = ?";
+  private final String createStatisticsQuery = "SELECT USERS.id,USERS.firstName,USERS.lastName,COUNTRYS.name FROM USERS\n" +
+          "    INNER JOIN BOOKINGS ON users.id = bookings.id_user\n" +
+          "LEFT JOIN HOTELS ON bookings.id_hotel = hotels.id\n" +
+          " LEFT JOIN CITYS ON hotels.id_city = citys.id " +
+          " LEFT JOIN countrys ON citys.id_country = countrys.id ORDER BY USERS.id";
   private CountryMapper countryMapper = new CountryMapper();
   private VisaMapper visaMapper = new VisaMapper();
 
@@ -42,28 +43,6 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
           new UserMapper());
   }
 
- /* public static void main(String[] args) {
-   JDBCDaoFactory jdbcDaoFactory =  new JDBCDaoFactory();
-    JDBCUserDao jdbcUserDao=jdbcDaoFactory.createUserDao();
-    List<Visas> visas= new ArrayList();
-    visas.add(new Visas(1L,"sdsf"));
-    Users user=new Users(15L,"ЙОбаний","V rot","asasfsfsdf@gmail.com","daosfksdf",true,new Countrys(6L,"Ukraine",new Visas(1L,"sdsf")),new ArrayList());
-  jdbcUserDao.create(user);
-    System.out.println(user.getId());
-   System.out.println(jdbcUserDao.findById(3L).get());
-    for (Users users: jdbcUserDao.findUsersByCountryId(3L)
-         ) {
-      System.out.println(users);
-    }
-    System.out.println(jdbcUserDao.findUserByVisaId(3L));
-   System.out.println(jdbcUserDao.count());
-jdbcUserDao.delete(5L);
-   System.out.println(jdbcUserDao.findUserByEmail("sfsfsf").get());
-    System.out.println(jdbcUserDao.findUserByName("gxgx").get());
-
-  }
-*/
-
   /**
    * @param user
    * @return
@@ -72,7 +51,7 @@ jdbcUserDao.delete(5L);
   public boolean update(Users user) {
     boolean created = false;
     try (PreparedStatement statement = connection.prepareStatement(UpdateQuery)) {
-      deleteVisas(user);
+      deleteVisas(user.getId());
       created = updateAction(statement, user);
       insertVisas(user);
     } catch (Exception ex) {
@@ -164,11 +143,10 @@ jdbcUserDao.delete(5L);
    */
   @Override
   public List<Users> getAllFromStatement(PreparedStatement statement) throws SQLException {
-    ObjectMapper<Users> userMapper = new UserMapper();
     List<Users> entities = new ArrayList<>();
     ResultSet rs = statement.executeQuery();
     while (rs.next()) {
-      Users extracted = userMapper.extractFromResultSet(rs);
+      Users extracted = mapper.extractFromResultSet(rs);
       extracted.setCountry(getCountry(extracted.getId()));
       extracted.setVisas(getVisas(extracted.getId()));
       entities.add(extracted);
@@ -340,14 +318,6 @@ jdbcUserDao.delete(5L);
     }
   }
 
-  /**
-   * @param user
-   * @return
-   * @throws SQLException
-   */
-  private boolean deleteVisas(Users user) throws SQLException {
-    return deleteVisas(user.getId());
-  }
 
   /**
    * @param userId
@@ -380,4 +350,26 @@ jdbcUserDao.delete(5L);
     }
     return result;
   }
+
+  /**
+   *
+   * @return
+   */
+  @Override
+  public List<UserStats> createStatistics(){
+    List<UserStats> found = new ArrayList<>();
+    UserStatsMapper userStats = new UserStatsMapper();
+
+    try (PreparedStatement statement = connection.prepareStatement(createStatisticsQuery)) {
+      ResultSet rs = statement.executeQuery();
+      while (rs.next()) {
+        UserStats extracted = userStats.extractFromResultSet(rs);
+        found.add(extracted);
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return found;
+  }
+
 }
