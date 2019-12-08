@@ -36,7 +36,7 @@ public class UserService {
     Optional<Users> byId = userDao.findById(id);
     if (byId.isPresent()) {
       Users users = byId.get();
-      return UserToUserResponse(users);
+      return userToUserResponse(users);
     }
       new IllegalArgumentException("User with id " + id + " not exists");
     return null;
@@ -51,12 +51,29 @@ public class UserService {
     List<UserResponse> list=new ArrayList<>();
     List<Users> users = userDao.findAll();
     for(Users user:users){
-      list.add(UserToUserResponse(user));
+      list.add(userToUserResponse(user));
     }
     return list;
   }
 
-  private UserResponse UserToUserResponse(Users user){
+  public List<Users> findAllUsers(){
+    try {
+      return  userDao.findAll();
+    }catch (Exception e){
+      throw  new NullPointerException();
+    }
+  }
+
+  public UserResponse findUserByEmail(String email){
+    try {
+      Optional<Users> userByEmail = userDao.findUserByEmail(email);
+      return userToUserResponse(userByEmail.get());
+    }catch (Exception e){
+      throw new NullPointerException("User with "+email+" don't found");
+    }
+  }
+
+  private UserResponse userToUserResponse(Users user){
     UserResponse ur =new UserResponse();
     ur.setId(user.getId());
     ur.setEmail(user.getEmail());
