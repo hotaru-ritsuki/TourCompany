@@ -33,38 +33,15 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
 
   public JDBCUserDao(Connection connection) {
     super(connection, "INSERT INTO USERS (firstName, lastName, email, password, isAdmin, id_country) VALUES (?, ?, ?, ?, ?, ?);",
-            "SELECT * FROM USERS WHERE id = ?",
-            "SELECT * FROM USERS ",
-            "SELECT COUNT(*) FROM USERS ",
-            "COUNT(*)",
-            "UPDATE USERS SET firstName = ?, lastName = ?, email = ?, password = ?, isAdmin = ?, id_country = ? WHERE id = ?",
-            7,
-            "DELETE FROM USERS WHERE id = ?",
-            new UserMapper());
+          "SELECT * FROM USERS WHERE id = ?",
+          "SELECT * FROM USERS ",
+          "SELECT COUNT(*) FROM USERS ",
+          "COUNT(*)",
+          "UPDATE USERS SET firstName = ?, lastName = ?, email = ?, password = ?, isAdmin = ?, id_country = ? WHERE id = ?",
+          7,
+          "DELETE FROM USERS WHERE id = ?",
+          new UserMapper());
   }
-
-  public static void main(String[] args) {
-   JDBCDaoFactory jdbcDaoFactory =  new JDBCDaoFactory();
-    JDBCUserDao jdbcUserDao=jdbcDaoFactory.createUserDao();
-    /*List<Visas> visas= new ArrayList();
-    visas.add(new Visas(1L,"sdsf"));
-    Users user=new Users(15L,"ЙОбаний","V rot","asasfsfsdf@gmail.com","daosfksdf",true,new Countrys(6L,"Ukraine",new Visas(1L,"sdsf")),new ArrayList());
-  jdbcUserDao.create(user);
-    System.out.println(user.getId());
-   System.out.println(jdbcUserDao.findById(3L).get());
-    for (Users users: jdbcUserDao.findUsersByCountryId(3L)
-         ) {
-      System.out.println(users);
-    }
-    System.out.println(jdbcUserDao.findUserByVisaId(3L));
-   System.out.println(jdbcUserDao.count());
-jdbcUserDao.delete(5L);
-   System.out.println(jdbcUserDao.findUserByEmail("sfsfsf").get());
-    System.out.println(jdbcUserDao.findUserByName("gxgx").get());
-*/
-    System.out.println(jdbcUserDao.createStatistics());
-  }
-
 
   /**
    * @param user

@@ -26,38 +26,17 @@ public class JDBCCityDao extends JDBCGenericDao<Citys> implements CityDao {
 
   public JDBCCityDao(Connection connection) {
     super(connection,
-            "INSERT INTO CITYS(name, id_country) VALUES(?,?)",
-            "SELECT * FROM CITYS WHERE CITYS.id = ?",
-            "SELECT * FROM CITYS ",
-            "SELECT COUNT(*) FROM CITYS ",
-            "COUNT(*)",
-            "UPDATE CITYS SET name = ?, id_country = ? WHERE id = ?",
-            3,
-            "DELETE FROM CITYS WHERE id = ?",
-            new CityMapper());
+          "INSERT INTO CITYS(name, id_country) VALUES(?,?)",
+          "SELECT * FROM CITYS WHERE CITYS.id = ?",
+          "SELECT * FROM CITYS ",
+          "SELECT COUNT(*) FROM CITYS ",
+          "COUNT(*)",
+          "UPDATE CITYS SET name = ?, id_country = ? WHERE id = ?",
+          3,
+          "DELETE FROM CITYS WHERE id = ?",
+          new CityMapper());
   }
 
-  public static void main(String[] args) {
-    JDBCCityDao jdbcCityDao = new JDBCDaoFactory().createCityDao();
-    Citys city = new Citys(1L, "Kyiasdadasd", new Countrys(4L, "sgdfgdfgdfg", new Visas(3L, "heroyam")));
-    /*jdbcCityDao.create(city);
-    city.setName("sdfsgsfgsdfgdsfgsdgsdg");
-    jdbcCityDao.create(city);
-
-    //jdbcCityDao.create(city);
-     */
-/*
-    System.out.println(jdbcCityDao.count());
-    //jdbcCityDao.update(city);
-    //jdbcCityDao.delete(1);
-  //jdbcCityDao.create(city);
-    System.out.println(jdbcCityDao.findByCityName("Kyi").get());
-    /*for (Citys citi:jdbcCityDao.findAll()
-         ) {
-      System.out.println(citi);
-    }
-    */
-  }
 
   /**
    * @param entity
@@ -174,4 +153,19 @@ public class JDBCCityDao extends JDBCGenericDao<Citys> implements CityDao {
     return city;
   }
 
+  @Override
+  public Optional<Citys> findById(Long id) {
+    Citys entity = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(FindByIDQuery)) {
+      statement.setLong(1, id);
+      ResultSet result = statement.executeQuery();
+      if (result.next()) {
+        entity = extractEntity(result);
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return Optional.ofNullable(entity);
+  }
 }

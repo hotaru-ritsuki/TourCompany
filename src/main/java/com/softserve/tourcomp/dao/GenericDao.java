@@ -22,7 +22,7 @@ public interface GenericDao<E> extends AutoCloseable {
    * @param id
    * @return
    */
-  Optional<E> findById(long id);
+  Optional<E> findById(Long id);
 
   /**
    * @return

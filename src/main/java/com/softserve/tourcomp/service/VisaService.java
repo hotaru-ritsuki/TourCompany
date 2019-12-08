@@ -7,6 +7,7 @@ import com.softserve.tourcomp.dto.visa.VisaResponse;
 import com.softserve.tourcomp.entity.Visas;
 import com.softserve.tourcomp.service.inteface.VisaServiceInf;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +17,27 @@ public class VisaService implements VisaServiceInf {
   private VisaDao visaDao = daoFactory.createVisaDao();
 
   @Override
-  public boolean create(VisaRequest visa) {
-    Visas visas = new Visas();
-    visas.setName(visa.getName());
-    return visaDao.create(visas);
+  public boolean create(VisaRequest visa) throws SQLException {
+    try {
+      Visas visas = new Visas();
+      visas.setName(visa.getName());
+      return visaDao.create(visas);
+    } catch (Exception e) {
+      throw new SQLException();
+    }
   }
+
+  @Override
+  public boolean update(Long id, VisaRequest visaR) throws SQLException {
+    try {
+      Visas visa = findOneVisa(id);
+      visa.setName(visa.getName());
+      return visaDao.update(visa);
+    }catch (Exception e){
+      throw new SQLException();
+    }
+  }
+
 
   @Override
   public Visas findOneVisa(Long id) {
@@ -30,23 +47,36 @@ public class VisaService implements VisaServiceInf {
 
   @Override
   public List<VisaResponse> findAll() {
-    List<VisaResponse> list = new ArrayList<>();
-    List<Visas> visas = visaDao.findAll();
-    for (Visas visa : visas) {
-      list.add(visaToVisaResponse(visa));
+    try {
+      List<VisaResponse> list = new ArrayList<>();
+      List<Visas> visas = visaDao.findAll();
+      for (Visas visa : visas) {
+        list.add(visaToVisaResponse(visa));
+      }
+      return list;
+    } catch (Exception e) {
+      throw new NullPointerException();
     }
-    return list;
   }
 
   @Override
   public VisaResponse findOne(Long id) {
-    Optional<Visas> byId = visaDao.findById(id);
-    if (byId.isPresent()) {
+    try {
+      Optional<Visas> byId = visaDao.findById(id);
       Visas visas = byId.get();
       return visaToVisaResponse(visas);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Visa with id " + id + " not exists");
     }
-    new IllegalArgumentException("User with id " + id + " not exists");
-    return null;
+  }
+
+  @Override
+  public Integer countOwners(Long id){
+    try{
+      return visaDao.countOwnersOfVisa(id);
+    }catch (Exception e){
+      throw new IllegalArgumentException("Visa with id " + id + " not exists");
+    }
   }
 
   protected VisaResponse visaToVisaResponse(Visas visa) {

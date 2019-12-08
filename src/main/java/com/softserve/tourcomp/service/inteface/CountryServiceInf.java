@@ -4,14 +4,15 @@ import com.softserve.tourcomp.dto.country.CountryRequest;
 import com.softserve.tourcomp.dto.country.CountryResponse;
 import com.softserve.tourcomp.entity.Countrys;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface CountryServiceInf {
   List<CountryResponse> findAll();
 
-  boolean update(Long id, CountryRequest country);
+  boolean update(Long id, CountryRequest country) throws SQLException;
 
-  boolean create(CountryRequest country);
+  boolean create(CountryRequest country) throws SQLException;
 
   Countrys findOneCountry(Long id);
 

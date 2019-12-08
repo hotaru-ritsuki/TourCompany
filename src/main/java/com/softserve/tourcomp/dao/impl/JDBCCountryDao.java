@@ -24,14 +24,14 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
 
   public JDBCCountryDao(Connection connection) {
     super(connection, "INSERT INTO COUNTRYS (name, id_visa) VALUES (?, ?)",
-            "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON COUNTRYS.id_visa = VISAS.id WHERE COUNTRYS.id = ?",
-            "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON id_visa = VISAS.id",
-            "SELECT COUNT(*) FROM COUNTRYS",
-            "COUNT(*)",
-            "UPDATE COUNTRYS SET name = ?, id_visa = ? WHERE id = ?",
-            3,
-            "DELETE FROM COUNTRYS WHERE id = ?",
-            new CountryMapper());
+          "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON COUNTRYS.id_visa = VISAS.id WHERE COUNTRYS.id = ?",
+          "SELECT * FROM COUNTRYS LEFT JOIN VISAS ON id_visa = VISAS.id",
+          "SELECT COUNT(*) FROM COUNTRYS",
+          "COUNT(*)",
+          "UPDATE COUNTRYS SET name = ?, id_visa = ? WHERE id = ?",
+          3,
+          "DELETE FROM COUNTRYS WHERE id = ?",
+          new CountryMapper());
   }
 
   /**
@@ -75,6 +75,22 @@ public class JDBCCountryDao extends JDBCGenericDao<Countrys> implements CountryD
   void setEntityValues(PreparedStatement statement, Countrys entity) throws SQLException {
     statement.setString(1, entity.getName());
     statement.setLong(2, entity.getVisa().getId());
+  }
+
+  @Override
+  public Optional<Countrys> findById(Long id) {
+    Countrys entity = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(FindByIDQuery)) {
+      statement.setLong(1, id);
+      ResultSet result = statement.executeQuery();
+      if (result.next()) {
+        entity = extractEntity(result);
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return Optional.ofNullable(entity);
   }
 
   /**

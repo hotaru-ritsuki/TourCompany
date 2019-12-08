@@ -32,40 +32,16 @@ public class JDBCHotelDao extends JDBCGenericDao<Hotels> implements HotelDao {
 
   public JDBCHotelDao(Connection connection) {
     super(connection, "INSERT INTO HOTELS (name, numberRooms, id_city, priceNight, discription) VALUES (?,?,?,?,?)",
-            "SELECT * FROM HOTELS WHERE id = ?",
-            "SELECT * FROM HOTELS",
-            "SELECT COUNT(*) FROM HOTELS",
-            "COUNT(*)",
-            "UPDATE HOTELS SET name = ?, numberRooms = ?,id_city = ?, priceNight = ?, discription = ? WHERE id = ?",
-            6,
-            "DELETE FROM HOTELS WHERE id = ?",
-            new HotelMapper());
+          "SELECT * FROM HOTELS WHERE id = ?",
+          "SELECT * FROM HOTELS",
+          "SELECT COUNT(*) FROM HOTELS",
+          "COUNT(*)",
+          "UPDATE HOTELS SET name = ?, numberRooms = ?,id_city = ?, priceNight = ?, discription = ? WHERE id = ?",
+          6,
+          "DELETE FROM HOTELS WHERE id = ?",
+          new HotelMapper());
   }
 
-  public static void main(String[] args) {
-    JDBCHotelDao jdbcHotelDao = new JDBCDaoFactory().createHotelDao();
-    //jdbcHotelDao.create(new Hotels(15L,"asasasd",15,154,"asdasdasdasdas",new Citys(2L,"asdasdasd",new Countrys(2L,"asdasd",new Visas()))));
-    //System.out.println(jdbcHotelDao.findById(5L).get());
-    /*for (Hotels gotel: jdbcHotelDao.findAll()
-         ) {
-      System.out.println(gotel);
-    }
-     */
-    //System.out.println(jdbcHotelDao.count());
-   /* Hotels gotel =jdbcHotelDao.findById(13L).get();
-    gotel.setName("changedsecond");
-    gotel.setPriceNight(228);
-    gotel.setCity(jdbcHotelDao.jdbcCityDao.findById(7L).get());
-    jdbcHotelDao.update(gotel);
-    System.out.println(jdbcHotelDao.findById(13L).get());
-*/
-
-    //System.out.println(jdbcHotelDao.findHotelByBookingId(4L).get());
-    for (HotelStats hs:jdbcHotelDao.createStatistics()
-         ) {
-      System.out.println(hs);
-    }
-  }
 
   /**
    * @param entity
@@ -285,5 +261,21 @@ public class JDBCHotelDao extends JDBCGenericDao<Hotels> implements HotelDao {
       ex.printStackTrace();
     }
     return found;
+  }
+
+  @Override
+  public Optional<Hotels> findById(Long hotelId) {
+    Hotels entity = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(FindByIDQuery)) {
+      statement.setLong(1, hotelId);
+      ResultSet result = statement.executeQuery();
+      if (result.next()) {
+        entity = extractEntity(result);
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return Optional.ofNullable(entity);
   }
 }
