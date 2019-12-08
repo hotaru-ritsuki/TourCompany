@@ -1,37 +1,86 @@
 package com.softserve.tourcomp.service;
 
+import com.softserve.tourcomp.dao.BookingDao;
 import com.softserve.tourcomp.dao.impl.JDBCCountryDao;
 import com.softserve.tourcomp.dao.impl.JDBCDaoFactory;
 import com.softserve.tourcomp.dao.impl.JDBCUserDao;
 import com.softserve.tourcomp.dto.user.UserRequest;
 import com.softserve.tourcomp.dto.user.UserResponse;
 import com.softserve.tourcomp.dto.visa.VisaResponse;
+import com.softserve.tourcomp.entity.Bookings;
 import com.softserve.tourcomp.entity.Countrys;
 import com.softserve.tourcomp.entity.Users;
 import com.softserve.tourcomp.entity.Visas;
+import com.softserve.tourcomp.service.inteface.UserServiceInf;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserService {
+public class UserService implements UserServiceInf {
   private JDBCDaoFactory daoFactory = new JDBCDaoFactory();
   private JDBCUserDao userDao = daoFactory.createUserDao();
   private JDBCCountryDao countryDao = daoFactory.createCountryDao();
   private CountryService countryService = new CountryService();
   private VisaService visaService = new VisaService();
+  private BookingDao bookingDao =daoFactory.createBookingDao();
 
-  public void create(UserRequest userRequest) {
-    Users user = new Users();
-    user.setFirstName(userRequest.getFirstName());
-    user.setLastName(userRequest.getLastName());
-    user.setEmail(userRequest.getEmail());
-    user.setIsAdmin(false);
-    user.setPassword(userRequest.getPassword());
-    user.setCountry(countryDao.findById(userRequest.getCountry()).get());
-    userDao.create(user);
+  @Override
+  public boolean create(UserRequest userRequest) throws SQLException {
+    try {
+      Users user = new Users();
+      user.setFirstName(userRequest.getFirstName());
+      user.setLastName(userRequest.getLastName());
+      user.setEmail(userRequest.getEmail());
+      user.setIsAdmin(false);
+      user.setPassword(userRequest.getPassword());
+      user.setCountry(countryDao.findById(userRequest.getCountry()).get());
+      return userDao.create(user);
+    } catch (Exception e){
+      throw new SQLException();
+    }
   }
 
+  @Override
+  public boolean update(Long id, UserRequest userR) throws SQLException {
+    try {
+      Users user = findOneUser(id);
+      user.setFirstName(userR.getFirstName());
+      user.setLastName(userR.getLastName());
+      user.setCountry(countryDao.findById(userR.getCountry()).get());
+      return userDao.update(user);
+    }catch (Exception e){
+      throw new SQLException();
+    }
+  }
+
+  // make this method after booking dao
+  @Override
+  public boolean delete(Long id) throws SQLException {
+    try{
+      List<Bookings> bookingsByUserId = bookingDao.findBookingsByUserId(id);
+      if (bookingsByUserId.isEmpty()) {
+        return userDao.delete(id);
+      }else{
+        return false;
+      }
+    }catch (Exception e){
+      throw new SQLException();
+    }
+  }
+
+  @Override
+  public UserResponse findByLastName(String lastName){
+    try {
+      Optional<Users> userByName = userDao.findUserByName(lastName);
+      return userToUserResponse(userByName.get());
+    } catch (Exception e){
+      throw new IllegalArgumentException("User with lastname " + lastName + " not exists");
+    }
+  }
+
+  @Override
   public UserResponse findOne(Long id) throws IllegalArgumentException {
     Optional<Users> byId = userDao.findById(id);
     if (byId.isPresent()) {
@@ -42,11 +91,13 @@ public class UserService {
     return null;
   }
 
+  @Override
   public Users findOneUser(Long id) {
     return userDao.findById(id)
           .orElseThrow(() -> new IllegalArgumentException("User with id " + id + " not exists"));
   }
 
+  @Override
   public List<UserResponse> findAll() {
     List<UserResponse> list = new ArrayList<>();
     List<Users> users = userDao.findAll();
@@ -56,6 +107,7 @@ public class UserService {
     return list;
   }
 
+  @Override
   public List<Users> findAllUsers() {
     try {
       return userDao.findAll();
@@ -64,6 +116,7 @@ public class UserService {
     }
   }
 
+  @Override
   public UserResponse findUserByEmail(String email) {
     try {
       Optional<Users> userByEmail = userDao.findUserByEmail(email);
