@@ -1,6 +1,9 @@
 package com.softserve.tourcomp.dao;
 import com.softserve.tourcomp.dao.impl.JDBCDaoFactory;
 
+/**
+ *
+ */
 public abstract class DaoFactory {
   private static volatile DaoFactory daoFactory;
 
@@ -16,7 +19,10 @@ public abstract class DaoFactory {
 
   public abstract CountryDao createCountryDao();
 
-
+  /**
+   *
+   * @return
+   */
   public static synchronized DaoFactory getInstance(){
     if( daoFactory == null){
       synchronized (DaoFactory.class) {

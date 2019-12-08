@@ -14,9 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ *
+ */
 public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
-  private CountryMapper countryMapper = new CountryMapper();
-  private VisaMapper visaMapper = new VisaMapper();
   private final String FindUserByEmailQuery = "SELECT * FROM USERS WHERE email = ?";
   private final String FindUserByUsernameQuery = "SELECT * FROM USERS WHERE lastName = ?";
   private final String findUsersByCountryIdQuery = "SELECT * FROM USERS WHERE id_country = ?";
@@ -26,17 +27,19 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
   private final String deleteVisasQuery = "DELETE FROM USERS_VISAS WHERE id_user = ?";
   private final String FindVisasQuery = "SELECT * FROM USERS_VISAS LEFT JOIN VISAS ON VISAS.id = id_visa WHERE id_user = ?";
   private final String FindCountryByUserIdQuery = "SELECT * FROM USERS LEFT JOIN COUNTRYS ON USERS.id_country=COUNTRYS.id WHERE USERS.id = ?";
+  private CountryMapper countryMapper = new CountryMapper();
+  private VisaMapper visaMapper = new VisaMapper();
 
   public JDBCUserDao(Connection connection) {
-    super(connection,"INSERT INTO USERS (firstName, lastName, email, password, isAdmin, id_country) VALUES (?, ?, ?, ?, ?, ?);",
-            "SELECT * FROM USERS WHERE id = ?",
-            "SELECT * FROM USERS ",
-            "SELECT COUNT(*) FROM USERS ",
-            "COUNT(*)",
-            "UPDATE USERS SET firstName = ?, lastName = ?, email = ?, password = ?, isAdmin = ?, id_country = ? WHERE id = ?",
-            7,
-            "DELETE FROM USERS WHERE id = ?",
-            new UserMapper());
+    super(connection, "INSERT INTO USERS (firstName, lastName, email, password, isAdmin, id_country) VALUES (?, ?, ?, ?, ?, ?);",
+          "SELECT * FROM USERS WHERE id = ?",
+          "SELECT * FROM USERS ",
+          "SELECT COUNT(*) FROM USERS ",
+          "COUNT(*)",
+          "UPDATE USERS SET firstName = ?, lastName = ?, email = ?, password = ?, isAdmin = ?, id_country = ? WHERE id = ?",
+          7,
+          "DELETE FROM USERS WHERE id = ?",
+          new UserMapper());
   }
 
  /* public static void main(String[] args) {
@@ -61,18 +64,27 @@ jdbcUserDao.delete(5L);
   }
 */
 
-@Override
-public boolean update(Users user){
-  boolean created = false;
-  try (PreparedStatement statement = connection.prepareStatement(UpdateQuery)){
-    deleteVisas(user);
-    created = updateAction(statement,user);
-    insertVisas(user);
-  } catch (Exception ex) {
-    ex.printStackTrace();
+  /**
+   * @param user
+   * @return
+   */
+  @Override
+  public boolean update(Users user) {
+    boolean created = false;
+    try (PreparedStatement statement = connection.prepareStatement(UpdateQuery)) {
+      deleteVisas(user);
+      created = updateAction(statement, user);
+      insertVisas(user);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return created;
   }
-  return created;
-}
+
+  /**
+   * @param email
+   * @return
+   */
   @Override
   public Optional<Users> findUserByEmail(String email) {
     Users entity = null;
@@ -89,6 +101,10 @@ public boolean update(Users user){
     return Optional.ofNullable(entity);
   }
 
+  /**
+   * @param usrId
+   * @return
+   */
   @Override
   public Optional<Users> findById(Long usrId) {
     Users entity = null;
@@ -105,6 +121,10 @@ public boolean update(Users user){
     return Optional.ofNullable(entity);
   }
 
+  /**
+   * @param lastName
+   * @return
+   */
   public Optional<Users> findUserByName(String lastName) {
     Users entity = null;
 
@@ -120,6 +140,10 @@ public boolean update(Users user){
     return Optional.ofNullable(entity);
   }
 
+  /**
+   * @param countryId
+   * @return
+   */
   @Override
   public List<Users> findUsersByCountryId(Long countryId) {
     List<Users> found = null;
@@ -133,13 +157,18 @@ public boolean update(Users user){
     return found;
   }
 
+  /**
+   * @param statement
+   * @return
+   * @throws SQLException
+   */
   @Override
   public List<Users> getAllFromStatement(PreparedStatement statement) throws SQLException {
     ObjectMapper<Users> userMapper = new UserMapper();
     List<Users> entities = new ArrayList<>();
     ResultSet rs = statement.executeQuery();
     while (rs.next()) {
-      Users extracted =userMapper.extractFromResultSet(rs);
+      Users extracted = userMapper.extractFromResultSet(rs);
       extracted.setCountry(getCountry(extracted.getId()));
       extracted.setVisas(getVisas(extracted.getId()));
       entities.add(extracted);
@@ -147,6 +176,10 @@ public boolean update(Users user){
     return entities;
   }
 
+  /**
+   * @param bookingId
+   * @return
+   */
   @Override
   public Optional<Users> findUserByBookingId(Long bookingId) {
     Users entity = null;
@@ -163,6 +196,10 @@ public boolean update(Users user){
     return Optional.ofNullable(entity);
   }
 
+  /**
+   * @param visaId
+   * @return
+   */
   @Override
   public List<Users> findUserByVisaId(Long visaId) {
     List<Users> found = null;
@@ -176,16 +213,30 @@ public boolean update(Users user){
     return found;
   }
 
+  /**
+   * @param entity
+   * @return
+   */
   @Override
   long getId(Users entity) {
     return entity.getId();
   }
 
+  /**
+   * @param entity
+   * @param Id
+   * @throws SQLException
+   */
   @Override
   void setId(Users entity, long Id) throws SQLException {
     entity.setId(Id);
   }
 
+  /**
+   * @param statement
+   * @param entity
+   * @throws SQLException
+   */
   @Override
   void setEntityValues(PreparedStatement statement, Users entity) throws SQLException {
     statement.setString(1, entity.getFirstName());
@@ -196,15 +247,23 @@ public boolean update(Users user){
     statement.setLong(6, entity.getCountry().getId());
   }
 
+  /**
+   * @param rs
+   * @return
+   * @throws SQLException
+   */
   @Override
   Users extractEntity(ResultSet rs) throws SQLException {
     Users extracted = mapper.extractFromResultSet(rs);
     extracted.setCountry(getCountry(extracted.getId()));
     extracted.setVisas(getVisas(extracted.getId()));
-//    extracted.getCountry().setVisa(getVisa(extracted.getCountry().getId()));
     return extracted;
   }
 
+  /**
+   * @param id
+   * @return
+   */
   private Countrys getCountry(Long id) {
     Countrys entity = null;
 
@@ -220,6 +279,10 @@ public boolean update(Users user){
     return Optional.ofNullable(entity).get();
   }
 
+  /**
+   * @param entity
+   * @return
+   */
   @Override
   public boolean create(Users entity) {
     boolean created = false;
@@ -236,6 +299,10 @@ public boolean update(Users user){
     return created;
   }
 
+  /**
+   * @param id
+   * @return
+   */
   @Override
   public boolean delete(long id) {
     boolean affected = false;
@@ -247,12 +314,22 @@ public boolean update(Users user){
     return affected;
   }
 
+  /**
+   * @param statement
+   * @param id
+   * @return
+   * @throws SQLException
+   */
   boolean deleteUsers(PreparedStatement statement, Long id) throws SQLException {
     statement.setLong(1, id);
     deleteVisas(id);
     return statement.executeUpdate() > 0;
   }
 
+  /**
+   * @param from
+   * @throws SQLException
+   */
   private void insertVisas(Users from) throws SQLException {
     try (PreparedStatement insertVisas = connection.prepareStatement(createVisasQuery)) {
       insertVisas.setLong(1, from.getId());
@@ -263,25 +340,40 @@ public boolean update(Users user){
     }
   }
 
+  /**
+   * @param user
+   * @return
+   * @throws SQLException
+   */
   private boolean deleteVisas(Users user) throws SQLException {
     return deleteVisas(user.getId());
   }
 
+  /**
+   * @param userId
+   * @return
+   * @throws SQLException
+   */
   private boolean deleteVisas(long userId) throws SQLException {
-    boolean executed=false;
+    boolean executed = false;
     try (PreparedStatement statement = connection.prepareStatement(deleteVisasQuery)) {
       statement.setLong(1, userId);
       statement.execute();
-      executed=true;
+      executed = true;
     }
     return executed;
   }
 
+  /**
+   * @param userId
+   * @return
+   * @throws SQLException
+   */
   private List<Visas> getVisas(long userId) throws SQLException {
     List<Visas> result = new ArrayList<>();
     try (PreparedStatement statement = connection.prepareStatement(FindVisasQuery)) {
-      statement.setLong(1,userId);
-      ResultSet rs =  statement.executeQuery();
+      statement.setLong(1, userId);
+      ResultSet rs = statement.executeQuery();
       while (rs.next()) {
         result.add(visaMapper.extractFromResultSet(rs));
       }
