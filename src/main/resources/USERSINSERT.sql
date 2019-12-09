@@ -121,8 +121,6 @@ VALUES ('Firs','Vasserman', 'vassermanfirs93@gmail.com','*ErNiDR2',1,FALSE);
 INSERT INTO USERS(firstName,lastName,email,password,id_country,isAdmin)
 VALUES ('Evtihiy','Gershfeld', 'gershfeldevtihiy27@gmail.com','vUzjZaa*',16,FALSE);
 INSERT INTO USERS(firstName,lastName,email,password,id_country,isAdmin)
-VALUES ('Mavrodiy','Kaplan', 'kaplanmavrodiykyLc_nZX@gmail.com','',44,16);
-INSERT INTO USERS(firstName,lastName,email,password,id_country,isAdmin)
 VALUES ('Isaak','Volf', 'volfisaak87@gmail.com','dpZ1ICfZ',1,FALSE);
 INSERT INTO USERS(firstName,lastName,email,password,id_country,isAdmin)
 VALUES ('Kassian','Ioffe', 'ioffekassian26@gmail.com','D_a_DUUx',14,FALSE);

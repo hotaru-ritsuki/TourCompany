@@ -6,6 +6,7 @@ import com.softserve.tourcomp.entity.Countrys;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 public interface CountryServiceInf {
   List<CountryResponse> findAll();
@@ -17,4 +18,6 @@ public interface CountryServiceInf {
   Countrys findOneCountry(Long id);
 
   CountryResponse findOne(Long id);
+
+  Map<Countrys, Integer> statisticAll();
 }

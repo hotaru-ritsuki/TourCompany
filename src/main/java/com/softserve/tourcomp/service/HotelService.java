@@ -19,9 +19,10 @@ import java.util.List;
 public class HotelService {
   private DaoFactory daoFactory = new JDBCDaoFactory();
   private HotelDao hotelDao = daoFactory.createHotelDao();
-  private CityService cityService = new CityService();
-  private BookingService bookingService=new BookingService();
-  private UserService userService=new UserService();
+  private ServiceFactory serviceFactory = ServiceFactory.getInstance();
+  private CityService cityService = serviceFactory.getCityService();
+  private BookingService bookingService=serviceFactory.getBookingService();
+  private UserService userService=serviceFactory.getUserService();
 
   public Boolean create(HotelRequest hotelR) throws SQLException {
     try {

@@ -20,9 +20,10 @@ import java.util.Optional;
 public class UserService implements UserServiceInf {
   private JDBCDaoFactory daoFactory = new JDBCDaoFactory();
   private JDBCUserDao userDao = daoFactory.createUserDao();
-  private CountryService countryService = new CountryService();
-  private VisaService visaService = new VisaService();
-  private BookingService bookingService = new BookingService();
+  private ServiceFactory serviceFactory = ServiceFactory.getInstance();
+  private CountryService countryService = serviceFactory.getCountryService();
+  private VisaService visaService = serviceFactory.getVisaService();
+  private BookingService bookingService = serviceFactory.getBookingService();
 
   @Override
   public boolean create(UserRequest userRequest) throws SQLException {
@@ -82,13 +83,13 @@ public class UserService implements UserServiceInf {
 
   @Override
   public UserResponse findOne(Long id) throws IllegalArgumentException {
-    Optional<Users> byId = userDao.findById(id);
-    if (byId.isPresent()) {
+    try {
+      Optional<Users> byId = userDao.findById(id);
       Users users = byId.get();
       return userToUserResponse(users);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Visa with id " + id + " not exists");
     }
-    new IllegalArgumentException("User with id " + id + " not exists");
-    return null;
   }
 
   @Override
@@ -126,7 +127,7 @@ public class UserService implements UserServiceInf {
     }
   }
 
-  public List<UserStats> userStats(Long id){
+  public List<UserStats> userStats(){
     List<UserStats> statistics = userDao.createStatistics();
     return statistics;
   }

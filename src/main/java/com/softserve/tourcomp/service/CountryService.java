@@ -15,7 +15,8 @@ import java.util.*;
 public class CountryService implements CountryServiceInf {
   private JDBCDaoFactory daoFactory = new JDBCDaoFactory();
   private CountryDao countryDao = daoFactory.createCountryDao();
-  private VisaService visaService = new VisaService();
+  private ServiceFactory serviceFactory = ServiceFactory.getInstance();
+  private VisaService visaService = serviceFactory.getVisaService();
 
   @Override
   public boolean create(CountryRequest country) throws SQLException {
@@ -24,7 +25,7 @@ public class CountryService implements CountryServiceInf {
       countrys.setName(country.getName());
       countrys.setVisa(visaService.findOneVisa(country.getVisa()));
       return countryDao.create(countrys);
-    } catch (Exception e){
+    } catch (Exception e) {
       throw new SQLException();
     }
   }
@@ -36,7 +37,7 @@ public class CountryService implements CountryServiceInf {
       countrys.setName(country.getName());
       countrys.setVisa(visaService.findOneVisa(country.getVisa()));
       return countryDao.update(countrys);
-    }catch (Exception e){
+    } catch (Exception e) {
       throw new SQLException();
     }
 
@@ -51,7 +52,7 @@ public class CountryService implements CountryServiceInf {
         list.add(countryToCountryResponse(country));
       }
       return list;
-    }catch (Exception e){
+    } catch (Exception e) {
       throw new NullPointerException();
     }
   }
@@ -73,11 +74,12 @@ public class CountryService implements CountryServiceInf {
     return null;
   }
 
-  public Map<Countrys,Integer> statisticAll( ){
-    Map<Countrys,Integer> stat=new HashMap<Countrys, Integer>();
-    List<Countrys> countrys=countryDao.findAll();
-    for (Countrys country:countrys){
-      stat.put(country,visaService.countOwners(country.getVisa().getId()));
+  @Override
+  public Map<Countrys, Integer> statisticAll() {
+    Map<Countrys, Integer> stat = new HashMap<Countrys, Integer>();
+    List<Countrys> countrys = countryDao.findAll();
+    for (Countrys country : countrys) {
+      stat.put(country, visaService.countOwners(country.getVisa().getId()));
     }
     return stat;
   }

@@ -17,7 +17,8 @@ import java.util.Optional;
 public class CityService implements CityServiceInf {
   private JDBCDaoFactory daoFactory = new JDBCDaoFactory();
   private CityDao cityDao = daoFactory.createCityDao();
-  private CountryService countryService = new CountryService();
+  private ServiceFactory serviceFactory = ServiceFactory.getInstance();
+  private CountryService countryService = serviceFactory.getCountryService();
 
   @Override
   public boolean create(CityRequest cityRequest) throws SQLException {

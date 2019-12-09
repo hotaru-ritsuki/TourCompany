@@ -18,8 +18,9 @@ import java.util.Optional;
 public class BookingService {
   private DaoFactory daoFactory = new JDBCDaoFactory();
   private BookingDao bookingDao = daoFactory.createBookingDao();
-  private UserService userService = new UserService();
-  private HotelService hotelService = new HotelService();
+  private ServiceFactory serviceFactory = ServiceFactory.getInstance();
+  private UserService userService = serviceFactory.getUserService();
+  private HotelService hotelService = serviceFactory.getHotelService();
 
   public Boolean create(BookingRequest bookingR) throws SQLException {
     try {

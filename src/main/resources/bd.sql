@@ -36,7 +36,6 @@ create table HOTELS
                        id bigint primary key auto_increment,
                        name varchar(100),
                        numberRooms int,
-                       id_country bigint,
                        id_city bigint,
                        priceNight int,
                        discription text
