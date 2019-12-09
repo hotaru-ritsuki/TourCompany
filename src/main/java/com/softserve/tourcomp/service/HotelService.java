@@ -1,5 +1,6 @@
 package com.softserve.tourcomp.service;
 
+import com.softserve.tourcomp.dao.BookingDao;
 import com.softserve.tourcomp.dao.DaoFactory;
 import com.softserve.tourcomp.dao.HotelDao;
 import com.softserve.tourcomp.dao.impl.JDBCDaoFactory;
@@ -21,7 +22,7 @@ public class HotelService {
   private HotelDao hotelDao = daoFactory.createHotelDao();
   private ServiceFactory serviceFactory = ServiceFactory.getInstance();
   private CityService cityService = serviceFactory.getCityService();
-  private BookingService bookingService=serviceFactory.getBookingService();
+  private BookingDao bookingDao =daoFactory.createBookingDao();
   private UserService userService=serviceFactory.getUserService();
 
   public Boolean create(HotelRequest hotelR) throws SQLException {
@@ -106,7 +107,7 @@ public class HotelService {
   public List<HotelResponse> findAvailableFromToInCity(Long id, LocalDate start, LocalDate end, Long idCity) throws SQLException {
       List<HotelResponse> all =findByCity(id);
       for (HotelResponse hotel:all){
-        hotel.setNumberRoom(hotel.getNumberRoom()-bookingService.bookRoom(hotel.getId(),start,end));
+        hotel.setNumberRoom(hotel.getNumberRoom()- bookingDao.countBookedRooms(hotel.getId(),start,end));
         if (hotel.getNumberRoom()<=0){
           all.remove(hotel);
         }
@@ -116,7 +117,7 @@ public class HotelService {
 
   public Boolean isHotelAvailable(Long id,LocalDate start,LocalDate end) throws SQLException {
     Hotels hotel=findOneHotel(id);
-    hotel.setNumberRoom(hotel.getNumberRoom()-bookingService.bookRoom(id, start, end));
+    hotel.setNumberRoom(hotel.getNumberRoom()- bookingDao.countBookedRooms(id, start, end));
     if (hotel.getNumberRoom()<=0){
       return false;
     }
@@ -125,7 +126,7 @@ public class HotelService {
 
   public Boolean canBooking(Long userId,LocalDate start,LocalDate end, Long hotelId,Integer number) throws SQLException {
     Hotels hotel=findOneHotel(hotelId);
-    hotel.setNumberRoom(hotel.getNumberRoom()-bookingService.bookRoom(hotelId, start, end));
+    hotel.setNumberRoom(hotel.getNumberRoom()- bookingDao.countBookedRooms(hotelId, start, end));
     if (hotel.getNumberRoom()>=number){
       Users user = userService.findOneUser(userId);
       Visas visa = hotel.getCity().getCountry().getVisa();
