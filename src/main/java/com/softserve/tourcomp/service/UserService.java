@@ -1,6 +1,5 @@
 package com.softserve.tourcomp.service;
 
-import com.softserve.tourcomp.dao.BookingDao;
 import com.softserve.tourcomp.dao.impl.JDBCDaoFactory;
 import com.softserve.tourcomp.dao.impl.JDBCUserDao;
 import com.softserve.tourcomp.dto.user.UserRequest;

@@ -18,12 +18,6 @@ public class App
 {
     public static void main( String[] args )
     {
-//        CityService cityService=new CityService();
-//        System.out.println(cityService.findOne(1L));
-////        cityService.create(new CityRequest("Lviv",1L));
-//
-////        CountryService countryService=new CountryService();
-////        System.out.println(countryService.findOneCountry(1L));
 
 
     }
