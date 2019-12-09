@@ -13,8 +13,5 @@ public class UserStats {
   private String firstName;
   private String lastName;
   private Set<String> countries;
-  public Integer getCount(){
-  return countries.size();
-}
 
 }

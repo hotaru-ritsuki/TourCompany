@@ -10,6 +10,7 @@ import com.softserve.tourcomp.entity.Hotels;
 import com.softserve.tourcomp.entity.Users;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,18 @@ public class BookingService {
     return false;
   }
 
+  public boolean delete(Long id){
+    try {
+      return bookingDao.delete(id);
+    } catch (Exception e){
+      throw new IllegalArgumentException("Booking with id " + id + " not exists");
+    }
+  }
+
+  public List<Bookings> findByUserBookings(Long id){
+    return bookingDao.findBookingsByUserId(id);
+  }
+
   public Bookings findOneBook(Long id) {
     return bookingDao.findById(id)
           .orElseThrow(() -> new IllegalArgumentException("Booking with id " + id + " not exists"));
@@ -68,6 +81,13 @@ public class BookingService {
     }
   }
 
+  public Integer bookRoom(Long idHotel, LocalDate start, LocalDate end) throws SQLException {
+    try{
+      return bookingDao.countBookedRooms(idHotel, start, end);
+    }catch (Exception e){
+      throw new SQLException();
+    }
+  }
 
   protected BookingResponse bookingToBookingResponse(Bookings bookings) {
     BookingResponse br = new BookingResponse();

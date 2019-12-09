@@ -10,9 +10,7 @@ import com.softserve.tourcomp.entity.Visas;
 import com.softserve.tourcomp.service.inteface.CountryServiceInf;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class CountryService implements CountryServiceInf {
   private JDBCDaoFactory daoFactory = new JDBCDaoFactory();
@@ -73,6 +71,15 @@ public class CountryService implements CountryServiceInf {
     }
     new IllegalArgumentException("Country with id " + id + " not exists");
     return null;
+  }
+
+  public Map<Countrys,Integer> statisticAll( ){
+    Map<Countrys,Integer> stat=new HashMap<Countrys, Integer>();
+    List<Countrys> countrys=countryDao.findAll();
+    for (Countrys country:countrys){
+      stat.put(country,visaService.countOwners(country.getVisa().getId()));
+    }
+    return stat;
   }
 
   protected CountryResponse countryToCountryResponse(Countrys country) {

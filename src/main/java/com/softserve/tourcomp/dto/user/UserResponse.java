@@ -21,4 +21,5 @@ public class UserResponse {
   private Boolean isAdmin;
   private CountryResponse country;
   private List<VisaResponse> visas;
+  private Integer amountVisa;
 }

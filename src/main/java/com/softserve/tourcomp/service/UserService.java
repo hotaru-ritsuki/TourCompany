@@ -10,6 +10,7 @@ import com.softserve.tourcomp.entity.Bookings;
 import com.softserve.tourcomp.entity.Countrys;
 import com.softserve.tourcomp.entity.Users;
 import com.softserve.tourcomp.entity.Visas;
+import com.softserve.tourcomp.entity.stats.UserStats;
 import com.softserve.tourcomp.service.inteface.UserServiceInf;
 
 import java.sql.SQLException;
@@ -22,7 +23,7 @@ public class UserService implements UserServiceInf {
   private JDBCUserDao userDao = daoFactory.createUserDao();
   private CountryService countryService = new CountryService();
   private VisaService visaService = new VisaService();
-  private BookingDao bookingDao =daoFactory.createBookingDao();
+  private BookingService bookingService = new BookingService();
 
   @Override
   public boolean create(UserRequest userRequest) throws SQLException {
@@ -53,15 +54,17 @@ public class UserService implements UserServiceInf {
     }
   }
 
-  // make this method after booking dao
   @Override
   public boolean delete(Long id) throws SQLException {
     try{
-      List<Bookings> bookingsByUserId = bookingDao.findBookingsByUserId(id);
+      List<Bookings> bookingsByUserId = bookingService.findByUserBookings(id);
       if (bookingsByUserId.isEmpty()) {
         return userDao.delete(id);
       }else{
-        return false;
+        for (Bookings  booking:bookingsByUserId){
+          bookingService.delete(booking.getId());
+        }
+        return userDao.delete(id);
       }
     }catch (Exception e){
       throw new SQLException();
@@ -124,6 +127,11 @@ public class UserService implements UserServiceInf {
     }
   }
 
+  public List<UserStats> userStats(Long id){
+    List<UserStats> statistics = userDao.createStatistics();
+    return statistics;
+  }
+
   protected UserResponse userToUserResponse(Users user) {
     UserResponse ur = new UserResponse();
     ur.setId(user.getId());
@@ -145,6 +153,7 @@ public class UserService implements UserServiceInf {
       }
       ur.setVisas(listr);
     }
+    ur.setAmountVisa(user.getVisas().size());
     return ur;
   }
 

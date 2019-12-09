@@ -79,6 +79,10 @@ public class VisaService implements VisaServiceInf {
     }
   }
 
+  public Integer countVisa(Long id){
+    return visaDao.countOwnersOfVisa(id);
+  }
+
   protected VisaResponse visaToVisaResponse(Visas visa) {
     VisaResponse vr = new VisaResponse();
     vr.setId(visa.getId());
