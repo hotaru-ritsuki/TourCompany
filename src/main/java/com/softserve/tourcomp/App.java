@@ -9,14 +9,18 @@ import com.softserve.tourcomp.dao.impl.JDBCDaoFactory;
 import com.softserve.tourcomp.entity.Countrys;
 import com.softserve.tourcomp.service.*;
 
+import java.sql.SQLException;
+
 /**
  * Hello world!
  */
 public class App {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws SQLException {
     ServiceFactory serviceFactory = ServiceFactory.getInstance();
-//     UserService userService=serviceFactory.getUserService();
-//    System.out.println(userService.findOneUser(2L));
+     UserService userService=serviceFactory.getUserService();
+    System.out.println(userService.findOneUser(2L));
+    HotelService hotelService=serviceFactory.getHotelService();
+    System.out.println(hotelService.findAll());
 //    CountryService countryService=serviceFactory.getCountryService();
 //    System.out.println(countryService.findAll());
 

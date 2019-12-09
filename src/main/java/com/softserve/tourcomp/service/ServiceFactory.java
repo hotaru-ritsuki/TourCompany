@@ -10,21 +10,23 @@ public class ServiceFactory {
 
   private static ServiceFactory instance;
 
-  private ServiceFactory(){
+  private ServiceFactory() {
 
   }
 
-  public static ServiceFactory getInstance(){
-    if (instance==null){
-      instance=new ServiceFactory();
+  public static ServiceFactory getInstance() {
+    if (instance == null) {
+      instance = new ServiceFactory();
     }
     return instance;
   }
 
   public BookingService getBookingService() {
     if (bookingService == null) {
-      if (bookingService == null) {
-        bookingService = new BookingService();
+      synchronized (BookingService.class) {
+        if (bookingService == null) {
+          bookingService = new BookingService();
+        }
       }
     }
     return bookingService;
@@ -32,8 +34,10 @@ public class ServiceFactory {
 
   public CityService getCityService() {
     if (cityService == null) {
-      if (cityService == null) {
-        cityService = new CityService();
+      synchronized (CityService.class) {
+        if (cityService == null) {
+          cityService = new CityService();
+        }
       }
     }
     return cityService;
@@ -41,8 +45,10 @@ public class ServiceFactory {
 
   public CountryService getCountryService() {
     if (countryService == null) {
-      if (countryService == null) {
-        countryService = new CountryService();
+      synchronized (CountryService.class) {
+        if (countryService == null) {
+          countryService = new CountryService();
+        }
       }
     }
     return countryService;
@@ -50,8 +56,10 @@ public class ServiceFactory {
 
   public HotelService getHotelService() {
     if (hotelService == null) {
-      if (hotelService == null) {
-        hotelService = new HotelService();
+      synchronized (HotelService.class) {
+        if (hotelService == null) {
+          hotelService = new HotelService();
+        }
       }
     }
     return hotelService;
@@ -59,19 +67,23 @@ public class ServiceFactory {
 
   public UserService getUserService() {
     if (userService == null) {
+      synchronized (UserService.class) {
         if (userService == null) {
           userService = new UserService();
         }
       }
+    }
     return userService;
   }
 
   public VisaService getVisaService() {
     if (visaService == null) {
+      synchronized (VisaService.class) {
         if (visaService == null) {
           visaService = new VisaService();
         }
       }
+    }
     return visaService;
   }
 

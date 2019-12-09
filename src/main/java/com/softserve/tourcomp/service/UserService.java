@@ -1,5 +1,6 @@
 package com.softserve.tourcomp.service;
 
+import com.softserve.tourcomp.dao.BookingDao;
 import com.softserve.tourcomp.dao.impl.JDBCDaoFactory;
 import com.softserve.tourcomp.dao.impl.JDBCUserDao;
 import com.softserve.tourcomp.dto.user.UserRequest;
@@ -23,7 +24,7 @@ public class UserService implements UserServiceInf {
   private ServiceFactory serviceFactory = ServiceFactory.getInstance();
   private CountryService countryService = serviceFactory.getCountryService();
   private VisaService visaService = serviceFactory.getVisaService();
-  private BookingService bookingService = serviceFactory.getBookingService();
+  private BookingDao bookingDao=daoFactory.createBookingDao();
 
   @Override
   public boolean create(UserRequest userRequest) throws SQLException {
@@ -57,12 +58,12 @@ public class UserService implements UserServiceInf {
   @Override
   public boolean delete(Long id) throws SQLException {
     try{
-      List<Bookings> bookingsByUserId = bookingService.findByUserBookings(id);
+      List<Bookings> bookingsByUserId = bookingDao.findBookingsByUserId(id);
       if (bookingsByUserId.isEmpty()) {
         return userDao.delete(id);
       }else{
         for (Bookings  booking:bookingsByUserId){
-          bookingService.delete(booking.getId());
+          bookingDao.delete(booking.getId());
         }
         return userDao.delete(id);
       }
