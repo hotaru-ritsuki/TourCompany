@@ -42,7 +42,7 @@ public class VisaService implements VisaServiceInf {
   @Override
   public Visas findOneVisa(Long id) {
     return visaDao.findById(id)
-          .orElseThrow(() -> new IllegalArgumentException("Car with id " + id + " not exists"));
+          .orElseThrow(() -> new IllegalArgumentException("Visa with id " + id + " not exists"));
   }
 
   @Override

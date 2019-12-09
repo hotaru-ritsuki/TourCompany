@@ -1,7 +1,7 @@
 package com.softserve.tourcomp.dto.booking;
 
-import com.softserve.tourcomp.entity.Hotels;
-import com.softserve.tourcomp.entity.Users;
+import com.softserve.tourcomp.dto.hotel.HotelResponse;
+import com.softserve.tourcomp.dto.user.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +19,6 @@ public class BookingResponse {
   private LocalDate endDate;
   private Integer amountRooms;
   private Integer price;
-  private Users user;
-  private Hotels hotel;
+  private UserResponse user;
+  private HotelResponse hotel;
 }

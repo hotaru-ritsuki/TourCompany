@@ -17,14 +17,14 @@ import java.util.Optional;
 public class CityService implements CityServiceInf {
   private JDBCDaoFactory daoFactory = new JDBCDaoFactory();
   private CityDao cityDao = daoFactory.createCityDao();
-  private CountryDao countryDao = daoFactory.createCountryDao();
+  private CountryService countryService = new CountryService();
 
   @Override
   public boolean create(CityRequest cityRequest) throws SQLException {
     try{
       Citys city = new Citys();
       city.setName(cityRequest.getName());
-      city.setCountry(countryDao.findById(cityRequest.getCountry()).get());
+      city.setCountry(countryService.findOneCountry(cityRequest.getCountry()));
       return cityDao.create(city);
     }catch (Exception e){
       throw new SQLException("Something went wrong");
@@ -36,7 +36,7 @@ public class CityService implements CityServiceInf {
     try {
       Citys city = findOneCity(id);
       city.setName(cityR.getName());
-      city.setCountry(countryDao.findById(cityR.getCountry()).get());
+      city.setCountry(countryService.findOneCountry(cityR.getCountry()));
       return cityDao.update(city);
     }catch (Exception e){
       throw new SQLException();
@@ -47,7 +47,7 @@ public class CityService implements CityServiceInf {
   @Override
   public Citys findOneCity(Long id) {
     return cityDao.findById(id)
-          .orElseThrow(() -> new IllegalArgumentException("User with id " + id + " not exists"));
+          .orElseThrow(() -> new IllegalArgumentException("City with id " + id + " not exists"));
   }
 
   @Override
@@ -57,7 +57,7 @@ public class CityService implements CityServiceInf {
       Citys citys = byId.get();
       return cityToCityResponse(citys);
     } catch (Exception e) {
-      throw new IllegalArgumentException("User with id " + id + " not exists");
+      throw new IllegalArgumentException("City with id " + id + " not exists");
     }
   }
 
@@ -75,7 +75,7 @@ public class CityService implements CityServiceInf {
     }
   }
 
-  private CityResponse cityToCityResponse(Citys city) {
+  protected CityResponse cityToCityResponse(Citys city) {
     CityResponse cr = new CityResponse();
     cr.setId(city.getId());
     cr.setName(city.getName());

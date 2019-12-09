@@ -17,7 +17,6 @@ import java.util.Optional;
 public class CountryService implements CountryServiceInf {
   private JDBCDaoFactory daoFactory = new JDBCDaoFactory();
   private CountryDao countryDao = daoFactory.createCountryDao();
-  private VisaDao visaDao = daoFactory.createVisaDao();
   private VisaService visaService = new VisaService();
 
   @Override
@@ -25,7 +24,7 @@ public class CountryService implements CountryServiceInf {
     try {
       Countrys countrys = new Countrys();
       countrys.setName(country.getName());
-      countrys.setVisa(visaDao.findById(country.getVisa()).get());
+      countrys.setVisa(visaService.findOneVisa(country.getVisa()));
       return countryDao.create(countrys);
     } catch (Exception e){
       throw new SQLException();
@@ -62,7 +61,7 @@ public class CountryService implements CountryServiceInf {
   @Override
   public Countrys findOneCountry(Long id) {
     return countryDao.findById(id)
-          .orElseThrow(() -> new IllegalArgumentException("User with id " + id + " not exists"));
+          .orElseThrow(() -> new IllegalArgumentException("Country with id " + id + " not exists"));
   }
 
   @Override

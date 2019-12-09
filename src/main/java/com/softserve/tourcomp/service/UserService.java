@@ -1,7 +1,6 @@
 package com.softserve.tourcomp.service;
 
 import com.softserve.tourcomp.dao.BookingDao;
-import com.softserve.tourcomp.dao.impl.JDBCCountryDao;
 import com.softserve.tourcomp.dao.impl.JDBCDaoFactory;
 import com.softserve.tourcomp.dao.impl.JDBCUserDao;
 import com.softserve.tourcomp.dto.user.UserRequest;
@@ -21,7 +20,6 @@ import java.util.Optional;
 public class UserService implements UserServiceInf {
   private JDBCDaoFactory daoFactory = new JDBCDaoFactory();
   private JDBCUserDao userDao = daoFactory.createUserDao();
-  private JDBCCountryDao countryDao = daoFactory.createCountryDao();
   private CountryService countryService = new CountryService();
   private VisaService visaService = new VisaService();
   private BookingDao bookingDao =daoFactory.createBookingDao();
@@ -35,7 +33,7 @@ public class UserService implements UserServiceInf {
       user.setEmail(userRequest.getEmail());
       user.setIsAdmin(false);
       user.setPassword(userRequest.getPassword());
-      user.setCountry(countryDao.findById(userRequest.getCountry()).get());
+      user.setCountry(countryService.findOneCountry(userRequest.getCountry()));
       return userDao.create(user);
     } catch (Exception e){
       throw new SQLException();
@@ -48,7 +46,7 @@ public class UserService implements UserServiceInf {
       Users user = findOneUser(id);
       user.setFirstName(userR.getFirstName());
       user.setLastName(userR.getLastName());
-      user.setCountry(countryDao.findById(userR.getCountry()).get());
+      user.setCountry(countryService.findOneCountry(userR.getCountry()));
       return userDao.update(user);
     }catch (Exception e){
       throw new SQLException();
@@ -126,7 +124,7 @@ public class UserService implements UserServiceInf {
     }
   }
 
-  private UserResponse userToUserResponse(Users user) {
+  protected UserResponse userToUserResponse(Users user) {
     UserResponse ur = new UserResponse();
     ur.setId(user.getId());
     ur.setEmail(user.getEmail());
