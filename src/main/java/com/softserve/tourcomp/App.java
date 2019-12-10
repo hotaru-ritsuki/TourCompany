@@ -16,13 +16,6 @@ import java.sql.SQLException;
  */
 public class App {
   public static void main(String[] args) throws SQLException {
-    ServiceFactory serviceFactory = ServiceFactory.getInstance();
-     UserService userService=serviceFactory.getUserService();
-    System.out.println(userService.findOneUser(2L));
-    HotelService hotelService=serviceFactory.getHotelService();
-    System.out.println(hotelService.findAll());
-//    CountryService countryService=serviceFactory.getCountryService();
-//    System.out.println(countryService.findAll());
 
 
   }
