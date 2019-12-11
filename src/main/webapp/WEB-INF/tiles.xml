@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC  "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+    <definition name="base-definition"
+                template="/WEB-INF/views/tiles/default.jsp">
+        <put-attribute name="title" value=""/>
+        <put-attribute name="header" value="/WEB-INF/views/tiles/template/header.jsp"/>
+        <put-attribute name="menu" value="/WEB-INF/views/tiles/template/menu.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/tiles/template/footer.jsp"/>
+    </definition>
+
+    <definition name="home" extends="base-definition">
+        <put-attribute name="title" value="Home"/>
+        <put-attribute name="body" value="/WEB-INF/views/tiles/pages/home.jsp"/>
+    </definition>
+
+    <definition name="city" extends="base-definition">
+        <put-attribute name="title" value="City"/>
+        <put-attribute name="body" value="/WEB-INF/views/tiles/pages/city.jsp"/>
+    </definition>
+
+    <definition name="country" extends="base-definition">
+        <put-attribute name="title" value="Country"/>
+        <put-attribute name="body" value="/WEB-INF/views/tiles/pages/country.jsp"/>
+    </definition>
+
+    <definition name="hotel" extends="base-definition">
+        <put-attribute name="title" value="Hotel"/>
+        <put-attribute name="body" value="/WEB-INF/views/tiles/pages/hotel.jsp"/>
+    </definition>
+
+    <definition name="client" extends="base-definition">
+        <put-attribute name="title" value="Cabinet"/>
+        <put-attribute name="body" value="/WEB-INF/views/tiles/pages/client.jsp"/>
+    </definition>
+
+    <definition name="login" extends="base-definition">
+        <put-attribute name="title" value="Login"/>
+        <put-attribute name="body" value="/WEB-INF/views/tiles/pages/login.jsp"/>
+    </definition>
+
+    <definition name="registration" extends="base-definition">
+        <put-attribute name="title" value="Registration"/>
+        <put-attribute name="body" value="/WEB-INF/views/tiles/pages/registration.jsp"/>
+    </definition>
+
+    <definition name="visa" extends="base-definition">
+        <put-attribute name="title" value="Visa"/>
+        <put-attribute name="body" value="/WEB-INF/views/tiles/pages/visa.jsp"/>
+    </definition>
+
+    <definition name="orderDetails" extends="base-definition">
+        <put-attribute name="title" value="Hotel"/>
+        <put-attribute name="body" value="/WEB-INF/views/tiles/pages/orderDetails.jsp"/>
+    </definition>
+
+</tiles-definitions>
