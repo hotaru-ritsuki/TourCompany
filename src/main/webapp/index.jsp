@@ -203,8 +203,9 @@
             <li><a href="hotel?id=all">Hotel</a></li>
             </c:if>
            <c:if test="${!session.equals('true')}">
-            <li><a href="login">Sing in</a></li>
-            <li><a href="register">Sing up</a></li>
+               <li><a href="index?session=true">Home</a></li>
+               <li><a href="login">Sign in</a></li>
+               <li><a href="register">Sign up</a></li>
            </c:if>
 
         </ul>

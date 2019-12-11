@@ -112,7 +112,7 @@
                                 </div>
 
                                 <div class="form-label-group">
-                                    <input  id="inputLastName" class="form-control trip__create_endDestination" name="LastName" placeholder="Last Name" required>
+                                    <input  id="inputLastName" class="form-control trip__create_endDestination" name="lastName" placeholder="Last Name" required>
                                     <label for="inputLastName">Last Name</label>
                                 </div>
                                 <div class="form-label-group">
@@ -132,7 +132,9 @@
                                         </select>
                                 </div>
                                     <button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 create_trip_button">Registration</button>
-
+                                <div class="errorMessage">
+                                    <h3>${requestScope.get("error")}</h3>
+                                </div>
                             </form>
                         </div>
                     </div>
