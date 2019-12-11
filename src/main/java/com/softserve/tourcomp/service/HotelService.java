@@ -11,20 +11,22 @@ import com.softserve.tourcomp.entity.Hotels;
 import com.softserve.tourcomp.entity.Users;
 import com.softserve.tourcomp.entity.Visas;
 import com.softserve.tourcomp.entity.stats.HotelStats;
+import com.softserve.tourcomp.service.inteface.HotelServiceInf;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HotelService {
+public class HotelService implements HotelServiceInf {
   private DaoFactory daoFactory = new JDBCDaoFactory();
   private HotelDao hotelDao = daoFactory.createHotelDao();
   private ServiceFactory serviceFactory = ServiceFactory.getInstance();
   private CityService cityService = serviceFactory.getCityService();
-  private BookingDao bookingDao =daoFactory.createBookingDao();
-  private UserService userService=serviceFactory.getUserService();
+  private BookingDao bookingDao = daoFactory.createBookingDao();
+  private UserService userService = serviceFactory.getUserService();
 
+  @Override
   public Boolean create(HotelRequest hotelR) throws SQLException {
     try {
       Hotels hotel = new Hotels();
@@ -39,6 +41,7 @@ public class HotelService {
     }
   }
 
+  @Override
   public Boolean update(Long id, HotelRequest hotelR) throws SQLException {
     try {
       Hotels hotel = findOneHotel(id);
@@ -52,10 +55,11 @@ public class HotelService {
     }
   }
 
+  @Override
   public List<HotelResponse> findByPrice(Integer lower, Integer high) throws SQLException {
     try {
       List<HotelResponse> hotelR = new ArrayList<>();
-      List<Hotels> hotels = hotelDao.findHotelsByPricesPerNight(lower,high);
+      List<Hotels> hotels = hotelDao.findHotelsByPricesPerNight(lower, high);
       for (Hotels hotel : hotels) {
         hotelR.add(hotelToHotelResponse(hotel));
       }
@@ -65,6 +69,7 @@ public class HotelService {
     }
   }
 
+  @Override
   public List<HotelResponse> findByLowerPrice(Integer lower) throws SQLException {
     try {
       List<HotelResponse> hotelR = new ArrayList<>();
@@ -78,6 +83,7 @@ public class HotelService {
     }
   }
 
+  @Override
   public List<HotelResponse> findByHigherPrice(Integer high) throws SQLException {
     try {
       List<HotelResponse> hotelR = new ArrayList<>();
@@ -91,6 +97,7 @@ public class HotelService {
     }
   }
 
+  @Override
   public List<HotelResponse> findByCountry(Long countryId) throws SQLException {
     try {
       List<HotelResponse> hotelR = new ArrayList<>();
@@ -104,41 +111,45 @@ public class HotelService {
     }
   }
 
+  @Override
   public List<HotelResponse> findAvailableFromToInCity(Long id, LocalDate start, LocalDate end, Long idCity) throws SQLException {
-      List<HotelResponse> all =findByCity(id);
-      for (HotelResponse hotel:all){
-        hotel.setNumberRoom(hotel.getNumberRoom()- bookingDao.countBookedRooms(hotel.getId(),start,end));
-        if (hotel.getNumberRoom()<=0){
-          all.remove(hotel);
-        }
+    List<HotelResponse> all = findByCity(id);
+    for (HotelResponse hotel : all) {
+      hotel.setNumberRoom(hotel.getNumberRoom() - bookingDao.countBookedRooms(hotel.getId(), start, end));
+      if (hotel.getNumberRoom() <= 0) {
+        all.remove(hotel);
       }
-      return all;
+    }
+    return all;
   }
 
-  public Boolean isHotelAvailable(Long id,LocalDate start,LocalDate end) throws SQLException {
-    Hotels hotel=findOneHotel(id);
-    hotel.setNumberRoom(hotel.getNumberRoom()- bookingDao.countBookedRooms(id, start, end));
-    if (hotel.getNumberRoom()<=0){
+  @Override
+  public Boolean isHotelAvailable(Long id, LocalDate start, LocalDate end) throws SQLException {
+    Hotels hotel = findOneHotel(id);
+    hotel.setNumberRoom(hotel.getNumberRoom() - bookingDao.countBookedRooms(id, start, end));
+    if (hotel.getNumberRoom() <= 0) {
       return false;
     }
     return true;
   }
 
-  public Boolean canBooking(Long userId,LocalDate start,LocalDate end, Long hotelId,Integer number) throws SQLException {
-    Hotels hotel=findOneHotel(hotelId);
-    hotel.setNumberRoom(hotel.getNumberRoom()- bookingDao.countBookedRooms(hotelId, start, end));
-    if (hotel.getNumberRoom()>=number){
+  @Override
+  public Boolean canBooking(Long userId, LocalDate start, LocalDate end, Long hotelId, Integer number) throws SQLException {
+    Hotels hotel = findOneHotel(hotelId);
+    hotel.setNumberRoom(hotel.getNumberRoom() - bookingDao.countBookedRooms(hotelId, start, end));
+    if (hotel.getNumberRoom() >= number) {
       Users user = userService.findOneUser(userId);
       Visas visa = hotel.getCity().getCountry().getVisa();
-      if (user.getVisas().contains(visa)){
+      if (user.getVisas().contains(visa)) {
         return true;
-      }else if(user.getCountry().getVisa().equals(visa)){
+      } else if (user.getCountry().getVisa().equals(visa)) {
         return true;
       }
     }
     return false;
   }
 
+  @Override
   public List<HotelResponse> findByCity(Long cityId) throws SQLException {
     try {
       List<HotelResponse> hotelR = new ArrayList<>();
@@ -152,6 +163,7 @@ public class HotelService {
     }
   }
 
+  @Override
   public List<HotelResponse> findAll() throws SQLException {
     try {
       List<HotelResponse> hotelR = new ArrayList<>();
@@ -165,14 +177,16 @@ public class HotelService {
     }
   }
 
+  @Override
   public List<HotelStats> statistic() throws SQLException {
     try {
       return hotelDao.createStatistics();
-    }catch (Exception e){
+    } catch (Exception e) {
       throw new SQLException();
     }
   }
 
+  @Override
   public HotelResponse findOne(Long id) {
     try {
       return hotelToHotelResponse(hotelDao.findById(id).get());
@@ -181,6 +195,7 @@ public class HotelService {
     }
   }
 
+  @Override
   public Hotels findOneHotel(Long id) {
     return hotelDao.findById(id)
           .orElseThrow(() -> new IllegalArgumentException("Hotel with id " + id + " not exists"));

@@ -24,7 +24,7 @@ public class UserService implements UserServiceInf {
   private ServiceFactory serviceFactory = ServiceFactory.getInstance();
   private CountryService countryService = serviceFactory.getCountryService();
   private VisaService visaService = serviceFactory.getVisaService();
-  private BookingDao bookingDao=daoFactory.createBookingDao();
+  private BookingDao bookingDao = daoFactory.createBookingDao();
 
   @Override
   public boolean create(UserRequest userRequest) throws SQLException {
@@ -37,10 +37,11 @@ public class UserService implements UserServiceInf {
       user.setPassword(userRequest.getPassword());
       user.setCountry(countryService.findOneCountry(userRequest.getCountry()));
       return userDao.create(user);
-    } catch (Exception e){
+    } catch (Exception e) {
       throw new SQLException();
     }
   }
+
   public UserResponse valid(String email, String password) {
     UserResponse user = findUserByEmail(email);
     Users users = findOneUser(user.getId());
@@ -50,6 +51,7 @@ public class UserService implements UserServiceInf {
       throw new RuntimeException("Password incorrect!");
     }
   }
+
   @Override
   public boolean update(Long id, UserRequest userR) throws SQLException {
     try {
@@ -58,34 +60,34 @@ public class UserService implements UserServiceInf {
       user.setLastName(userR.getLastName());
       user.setCountry(countryService.findOneCountry(userR.getCountry()));
       return userDao.update(user);
-    }catch (Exception e){
+    } catch (Exception e) {
       throw new SQLException();
     }
   }
 
   @Override
   public boolean delete(Long id) throws SQLException {
-    try{
+    try {
       List<Bookings> bookingsByUserId = bookingDao.findBookingsByUserId(id);
       if (bookingsByUserId.isEmpty()) {
         return userDao.delete(id);
-      }else{
-        for (Bookings  booking:bookingsByUserId){
+      } else {
+        for (Bookings booking : bookingsByUserId) {
           bookingDao.delete(booking.getId());
         }
         return userDao.delete(id);
       }
-    }catch (Exception e){
+    } catch (Exception e) {
       throw new SQLException();
     }
   }
 
   @Override
-  public UserResponse findByLastName(String lastName){
+  public UserResponse findByLastName(String lastName) {
     try {
       Optional<Users> userByName = userDao.findUserByName(lastName);
       return userToUserResponse(userByName.get());
-    } catch (Exception e){
+    } catch (Exception e) {
       throw new IllegalArgumentException("User with lastname " + lastName + " not exists");
     }
   }
@@ -136,7 +138,7 @@ public class UserService implements UserServiceInf {
     }
   }
 
-  public List<UserStats> userStats(){
+  public List<UserStats> userStats() {
     List<UserStats> statistics = userDao.createStatistics();
     return statistics;
   }

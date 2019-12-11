@@ -8,6 +8,7 @@ import com.softserve.tourcomp.dto.booking.BookingResponse;
 import com.softserve.tourcomp.entity.Bookings;
 import com.softserve.tourcomp.entity.Hotels;
 import com.softserve.tourcomp.entity.Users;
+import com.softserve.tourcomp.service.inteface.BookingServiceInf;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -15,13 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BookingService {
+public class BookingService implements BookingServiceInf {
   private DaoFactory daoFactory = new JDBCDaoFactory();
   private BookingDao bookingDao = daoFactory.createBookingDao();
   private ServiceFactory serviceFactory = ServiceFactory.getInstance();
   private UserService userService = serviceFactory.getUserService();
   private HotelService hotelService = serviceFactory.getHotelService();
 
+  @Override
   public Boolean create(BookingRequest bookingR) throws SQLException {
     try {
       Bookings book = new Bookings();
@@ -38,11 +40,13 @@ public class BookingService {
     }
   }
 
-  public boolean update(Long id, BookingRequest bookingR) {
+  @Override
+  public Boolean update(Long id, BookingRequest bookingR) {
     return false;
   }
 
-  public boolean delete(Long id){
+  @Override
+  public Boolean delete(Long id){
     try {
       return bookingDao.delete(id);
     } catch (Exception e){
@@ -50,15 +54,18 @@ public class BookingService {
     }
   }
 
+  @Override
   public List<Bookings> findByUserBookings(Long id){
     return bookingDao.findBookingsByUserId(id);
   }
 
+  @Override
   public Bookings findOneBook(Long id) {
     return bookingDao.findById(id)
           .orElseThrow(() -> new IllegalArgumentException("Booking with id " + id + " not exists"));
   }
 
+  @Override
   public BookingResponse findOne(Long id) {
     try {
       Optional<Bookings> byId = bookingDao.findById(id);
@@ -69,6 +76,7 @@ public class BookingService {
     }
   }
 
+  @Override
   public List<BookingResponse> findAll(Long id) throws SQLException {
     try{
       List<BookingResponse> bookList=new ArrayList<>();
@@ -82,6 +90,7 @@ public class BookingService {
     }
   }
 
+  @Override
   public Integer bookRoom(Long idHotel, LocalDate start, LocalDate end) throws SQLException {
     try{
       return bookingDao.countBookedRooms(idHotel, start, end);
