@@ -30,4 +30,24 @@
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+    <servlet-name>IndexServlet</servlet-name>
+    <servlet-class>com.softserve.tourcomp.controller.home.IndexServlet</servlet-class>
+</servlet>
+
+    <servlet-mapping>
+        <servlet-name>IndexServlet</servlet-name>
+        <url-pattern>/index</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>com.softserve.tourcomp.controller.registration.RegisterServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+
 </web-app>

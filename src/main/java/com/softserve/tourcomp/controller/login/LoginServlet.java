@@ -41,10 +41,15 @@ public class LoginServlet extends HttpServlet {
         }
 
         if (result) {
-            req.getSession().setAttribute("email", req.getParameter(Attribute.EMAIL));
             req.getSession().setAttribute("usid", ur.getId());
             req.getSession().setAttribute("session", "true");
-            resp.sendRedirect(PathToPage.HOME_PATH);
+            if(ur.getIsAdmin()){
+              req.getSession().setAttribute("isAdmin","true");
+            }
+            else{
+              req.getSession().setAttribute("isAdmin","false");
+            }
+            resp.sendRedirect("index");
         }
     }
 }

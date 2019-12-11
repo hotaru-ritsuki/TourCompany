@@ -40,11 +40,17 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.tiles</groupId>
+      <artifactId>tiles-extras</artifactId>
+      <version>RELEASE</version>
+    </dependency>
+
     <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.17</version>
+      <version>5.1.47</version>
     </dependency>
 
     <dependency>
@@ -123,7 +129,11 @@
       <version>2.9.6</version>
     </dependency>
 
-
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20180813</version>
+    </dependency>
 
   </dependencies>
 

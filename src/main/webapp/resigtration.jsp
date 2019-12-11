@@ -105,7 +105,7 @@
                     <div class="row">
                         <div class="col-md-9 col-lg-8 mx-auto">
                             <h3 class="login-heading mb-4">Nice to see you!</h3>
-                            <form class="trip__create_form">
+                            <form class="trip__create_form" method="post">
                                 <div class="form-label-group">
                                     <input  id="inputName" class="form-control trip__create_startDestination" name="firstName" placeholder="Name" required>
                                     <label for="inputName">Name</label>
@@ -141,5 +141,9 @@
         </div>
     </div>
 </div>
+<div class="footer">
+    <h5 style="text-align: center;padding: 0;margin: 0"> All rights reserved. &copy; 2019 by Hotaru_Ritsuki and AlexHack </h5>
+</div>
+
 </body>
 </html>

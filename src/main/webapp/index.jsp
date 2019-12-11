@@ -1,12 +1,37 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: oleksii
-  Date: 11.12.2019
-  Time: 12:18 дп
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
+
+<%--<nav class="navbar navbar-inverse navbar-fixed-top">--%>
+<%--    <div class="container-fluid">--%>
+<%--        <div class="navbar-header">--%>
+<%--            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"--%>
+<%--                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">--%>
+<%--                <span class="sr-only">Toggle navigation</span>--%>
+<%--                <span class="icon-bar"></span>--%>
+<%--                <span class="icon-bar"></span>--%>
+<%--                <span class="icon-bar"></span>--%>
+<%--            </button>--%>
+<%--            <a class="navbar-brand" href="${pageContext.request.contextPath}/">Home</a>--%>
+<%--        </div>--%>
+
+<%--        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">--%>
+<%--            <ul class="nav navbar-nav" id="navbar-nav">--%>
+<%--                <li><a href="${pageContext.request.contextPath}/hotelInfo">Hotel</a></li>--%>
+<%--                <c:if test="${!session.equals('true')}">--%>
+<%--                    <li><a href="${pageContext.request.contextPath}/login">Login</a></li>--%>
+<%--                </c:if>--%>
+<%--                <c:if test="${session.equals('true')}">--%>
+<%--                    <li><a href="${pageContext.request.contextPath}/user">Cabinet</a></li>--%>
+<%--                    <li><a href="${pageContext.request.contextPath}/logout">Logout</a></li>--%>
+<%--                </c:if>--%>
+<%--            </ul>--%>
+
+<%--        </div>--%>
+<%--    </div>--%>
+<%--</nav>--%>
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -155,17 +180,33 @@
         <div class="logo">TourFirm</div>
 
         <ul class="menu-area">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="">Country</a>
-                <ul class="listG">
-                    <li><a href="#">German</a></li>
-                    <li><a href="#">Poland</a></li>
-                    <li><a href="#">Ukraine</a></li>
+
+            <c:if test="${session.equals('true')}">
+                <li><a href="index?session=true">Home</a></li>
+                <li><a href="profile?session=true">Cabinet</a></li>
+                <li><a href="logout">"Logout"</a></li>
+                    <c:if test="${isAdmin.equals('true')}">
+                <li><a href="statistics">Statistics</a></li>
+                    </c:if>
+                <li><a href="hotels?id=all">Country</a>
+                    <ul class="listG">
+                        <li><a href="hotels?id=Germany">Germany</a></li>
+                        <li><a href="hotels?id=Poland">Poland</a></li>
+                        <li><a href="hotels?id=Canada">Canada</a></li>
+                        <li><a href="hotels?id=Japan">Japan</a></li>
+                        <li><a href="hotels?id=North Korea">North Korea</a></li>
+                        <li><a href="hotels?id=USA">USA</a></li>
+                        <li><a href="hotels?id=Greece">Greece</a></li>
+                        <li><a href="hotels?id=Ukraine">Ukraine</a></li>
                 </ul>
             </li>
-            <li><a href="/hotel">Hotel</a></li>
+            <li><a href="hotel?id=all">Hotel</a></li>
+            </c:if>
+           <c:if test="${!session.equals('true')}">
             <li><a href="login">Sing in</a></li>
-            <li><a href="resigtration.jsp">Sing up</a></li>
+            <li><a href="register">Sing up</a></li>
+           </c:if>
+
         </ul>
     </nav>
 </div>
@@ -179,17 +220,12 @@
 
     <div class="w3-center">
         <div class="w3-section">
-            <button class="w3-button w3-light-grey" onclick="plusDivs(-1)">❮ Prev</button>
-            <button class="w3-button w3-light-grey" onclick="plusDivs(1)">Next ❯</button>
+            <button class="w3-button w3-light-grey" onclick="plusDivs(-1)"> Prev </button>
+            <button class="w3-button w3-light-grey" onclick="plusDivs(1)"> Next </button>
         </div>
     </div>
 
 </div>
-
-<div class="footer">
-    <footer>
-        Design
-    </footer>
 </div>
 <script>
     var slideIndex = 1;
@@ -218,6 +254,11 @@
         x[slideIndex-1].style.display = "block";
         dots[slideIndex-1].className += " w3-red";
     }
+
 </script>
+
+<div class="footer">
+        <h5 style="text-align: center;padding: 0;margin: 0"> All rights reserved. &copy; 2019 by Hotaru_Ritsuki and AlexHack </h5>
+</div>
 </body>
 </html>
