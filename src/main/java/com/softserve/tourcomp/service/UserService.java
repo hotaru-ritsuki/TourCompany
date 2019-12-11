@@ -41,7 +41,15 @@ public class UserService implements UserServiceInf {
       throw new SQLException();
     }
   }
-
+  public UserResponse valid(String email, String password) {
+    UserResponse user = findUserByEmail(email);
+    Users users = findOneUser(user.getId());
+    if (users.getPassword().equals(password)) {
+      return user;
+    } else {
+      throw new RuntimeException("Password incorrect!");
+    }
+  }
   @Override
   public boolean update(Long id, UserRequest userR) throws SQLException {
     try {

@@ -1,11 +1,24 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: oleksii
-  Date: 10.12.2019
-  Time: 9:38 пп
-  To change this template use File | Settings | File Templates.
---%>
+<%--<div class="container">--%>
+<%--    <style>--%>
+<%--        <%@include file='/css/login.css' %>--%>
+<%--    </style>--%>
+<%--    <div class="errorMessage">--%>
+<%--        <p>${requestScope.get("error")}</p>--%>
+<%--    </div>--%>
+<%--    <div class="login">--%>
+<%--        <h1>Login</h1>--%>
+<%--        <form method="post">--%>
+<%--            <input type="text" name="login" placeholder="Login" required="required" />--%>
+<%--            <input type="password" name="password" placeholder="Password" required="required" />--%>
+<%--            <button type="submit" class="btn btn-primary btn-block btn-large">Let me in.</button>--%>
+<%--            <a href="${base}/registration" class="btn btn-primary btn-block btn-large">Sign up</a>--%>
+<%--        </form>--%>
+<%--    </div>--%>
+<%--</div>--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<c:set var="base" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -113,22 +126,23 @@
                     <div class="row">
                         <div class="col-md-9 col-lg-8 mx-auto">
                             <h3 class="login-heading mb-4">Nice to see you!</h3>
-                            <form class="trip__create_form">
+                            <form class="trip__create_form" method="post">
                                 <div class="form-label-group">
                                 </div>
-                                <div class="form-label-group">
-                                    <input  id="inputEmail" class="form-control trip__create_endDestination" name="email" placeholder="Email" required>
-                                    <label for="inputEmail">Email</label>
-                                </div>
-                                <div class="form-label-group">
-                                    <input  id="inputPassword" class="form-control trip__create_endDestination" name="password" placeholder="Password" required>
-                                    <label for="inputPassword">Password</label>
-                                </div>
-                                <button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 create_trip_button">Login</button>
-
-                            </form>
-                            <a href="resigtration.jsp"><button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 registratio">Registration</button></a>
-
+                                    <div class="form-label-group">
+                                       <input  id="inputEmail" class="form-control trip__create_endDestination" name="email" placeholder="Email" required>
+                                       <label for="inputEmail">Email</label>
+                                    </div>
+                                 <div class="form-label-group">
+                                      <input  id="inputPassword" type="password" class="form-control trip__create_endDestination" name="password" placeholder="Password" required>
+                                        <label for="inputPassword">Password</label>
+                                    </div>
+                                    <button type="submit" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 create_trip_button">Login</button>
+                                    <div class="errorMessage">
+                                        <h3>${requestScope.get("error")}</h3>
+                                    </div>
+                                </form>
+                            <a href="${base}/registration"><button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 registratio">Registration</button></a>
                         </div>
                     </div>
                 </div>

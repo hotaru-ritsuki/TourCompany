@@ -372,4 +372,11 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
     return found;
   }
 
+  public Users validate(String email,String password) {
+    Users temp = findUserByEmail(email).get();
+    if(temp.getPassword().equals(password)){
+return temp;
+    }
+    throw new RuntimeException();
+  }
 }

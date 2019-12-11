@@ -2,16 +2,20 @@ package com.softserve.tourcomp.dao.impl;
 
 import com.softserve.tourcomp.dao.DaoFactory;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.DriverManager;
 
 /**
  *
  */
 public class JDBCDaoFactory extends DaoFactory {
+  private static Connection connection;
+  private static final String URL = "jdbc:mysql://localhost:3306/tourfirm?useSSL=false";
+  private static final String USER = "root";
+  private static final String PASSWORD = "Root1234";
 
-  private DataSource dataSource = ConnectionPoolHolder.getDataSource();
+  public JDBCDaoFactory() {
+  }
 
   /**
    * @return
@@ -64,11 +68,15 @@ public class JDBCDaoFactory extends DaoFactory {
   /**
    * @return
    */
-  private Connection getConnection() {
-    try {
-      return dataSource.getConnection();
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
-    }
+  private static synchronized Connection getConnection() {
+        if (connection == null){
+          try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            connection = DriverManager.getConnection(URL,USER,PASSWORD);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+        return connection;
   }
 }
