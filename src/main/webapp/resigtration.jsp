@@ -1,11 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: oleksii
-  Date: 10.12.2019
-  Time: 9:38 пп
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -115,6 +107,13 @@
                             <h3 class="login-heading mb-4">Nice to see you!</h3>
                             <form class="trip__create_form">
                                 <div class="form-label-group">
+                                    <input  id="inputName" class="form-control trip__create_startDestination" name="firstName" placeholder="Name" required>
+                                    <label for="inputName">Name</label>
+                                </div>
+
+                                <div class="form-label-group">
+                                    <input  id="inputLastName" class="form-control trip__create_endDestination" name="LastName" placeholder="Last Name" required>
+                                    <label for="inputLastName">Last Name</label>
                                 </div>
                                 <div class="form-label-group">
                                     <input  id="inputEmail" class="form-control trip__create_endDestination" name="email" placeholder="Email" required>
@@ -124,11 +123,17 @@
                                     <input  id="inputPassword" class="form-control trip__create_endDestination" name="password" placeholder="Password" required>
                                     <label for="inputPassword">Password</label>
                                 </div>
-                                <button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 create_trip_button">Login</button>
+                                <div class="form-label-group">
+                                    Country: <select name="country">
+                                            <option>Poland</option>
+                                            <option>Ukraine</option>
+                                            <option>Germany</option>
+                                            <option>Iceland</option>
+                                        </select>
+                                </div>
+                                    <button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 create_trip_button">Registration</button>
 
                             </form>
-                            <a href="resigtration.jsp"><button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 registratio">Registration</button></a>
-
                         </div>
                     </div>
                 </div>

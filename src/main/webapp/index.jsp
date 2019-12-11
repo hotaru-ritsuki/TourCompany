@@ -11,6 +11,6 @@
     <title>$Title$</title>
   </head>
   <body>
-  <a href="mainpage.jsp"><button>Hello</button></a>
+  <a href="resigtration.jsp"><button>Hello</button></a>
   </body>
 </html>
