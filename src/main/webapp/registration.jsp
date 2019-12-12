@@ -120,7 +120,7 @@
                                     <label for="inputEmail">Email</label>
                                 </div>
                                 <div class="form-label-group">
-                                    <input  id="inputPassword" class="form-control trip__create_endDestination" name="password" placeholder="Password" required>
+                                    <input  id="inputPassword" type="password" class="form-control trip__create_endDestination" name="password" placeholder="Password" required>
                                     <label for="inputPassword">Password</label>
                                 </div>
                                 <div class="form-label-group">

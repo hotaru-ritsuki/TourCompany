@@ -26,7 +26,7 @@ public class ProfileServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
       try {
        List<Visas> lv= ud.getVisas((Long)req.getSession().getAttribute("usid"));
-       if(lv.size()==0){
+       if(lv.isEmpty()){
          throw new Exception();
        }
        else{

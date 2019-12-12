@@ -41,14 +41,31 @@
     </servlet-mapping>
 
     <servlet>
-    <servlet-name>LogoutServlet</servlet-name>
-    <servlet-class>com.softserve.tourcomp.controller.logout.LogoutServlet</servlet-class>
+    <servlet-name>HotelStatsServlet</servlet-name>
+    <servlet-class>com.softserve.tourcomp.controller.stats.HotelStatsServlet</servlet-class>
 </servlet>
+
+    <servlet-mapping>
+        <servlet-name>HotelStatsServlet</servlet-name>
+        <url-pattern>/hotelstats</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>UserStatsServlet</servlet-name>
+        <servlet-class>com.softserve.tourcomp.controller.stats.UserStatsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UserStatsServlet</servlet-name>
+        <url-pattern>/userstats</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>com.softserve.tourcomp.controller.logout.LogoutServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
-
 
 </web-app>

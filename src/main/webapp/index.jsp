@@ -188,7 +188,6 @@
                     <c:if test="${isAdmin.equals('true')}">
                         <li><a href="stats?id=all">Statistic</a>
                             <ul class="listG">
-                                <li><a href="countrystats">Country/Visa</a></li>
                                 <li><a href="userstats">Users</a></li>
                                 <li><a href="hotelstats">Hotels</a></li>
                             </ul>

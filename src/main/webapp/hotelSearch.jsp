@@ -201,7 +201,7 @@
                         <li><a href="hotels?id=Ukraine">Ukraine</a></li>
                     </ul>
                 </li>
-                <li><a href="hotel?id=all">Hotel</a></li>
+                <li><a href="hotels?id=all">Hotel</a></li>
             </c:if>
             <c:if test="${!session.equals('true')}">
                 <li><a href="index?session=true">Home</a></li>
@@ -225,6 +225,8 @@
 
         <label for="inputPriceTo">Price Tp</label>
         <input type="number" id="inputPriceTo" class="form-control" name="priceFrom" placeholder="To">
+        <button type="submit" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 create_trip_button">Search</button>
+
     </form>
 
 </div>
