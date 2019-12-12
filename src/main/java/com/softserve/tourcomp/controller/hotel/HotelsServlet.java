@@ -42,17 +42,26 @@ public class HotelsServlet extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    if(req.getParameter("dateStart")!=null) {
+      String[] sD = req.getParameter("dateStart").split("-");
+      String[] eD = req.getParameter("dateEnd").split("-");
+      LocalDate start = LocalDate.of(Integer.valueOf(sD[0]), Integer.valueOf(sD[1]), Integer.valueOf(sD[2]));
+      LocalDate end = LocalDate.of(Integer.valueOf(eD[0]), Integer.valueOf(eD[1]), Integer.valueOf(eD[2]));
+      req.getSession().setAttribute("start",start);
+      req.getSession().setAttribute("end",end);
+    }
     Integer priceFrom=-1;
     Integer priceTo=100000;
-    //LocalDate start = LocalDate.of(Integer.parseInt(sD[0]),Integer.parseInt(sD[1]),Integer.parseInt(sD[2]));
-    //LocalDate end = LocalDate.of(Integer.parseInt(eD[0]),Integer.parseInt(eD[1]),Integer.parseInt(eD[2]));
-if(req.getParameter("priceFrom")!=null){
+ if(req.getParameter("priceFrom")!=null){
   priceFrom=Integer.parseInt(req.getParameter("priceFrom"));
 }
     if(req.getParameter("priceTo")!=null){
       priceTo=Integer.parseInt(req.getParameter("priceTo"));
     }
-List<Hotels> lh=hd.findHotelsByPricesPerNight(priceFrom,priceTo);
+    try{
+
+      List<Hotels> lh=hd.findHotelsByPricesPerNight(priceFrom,priceTo);
+
     hotels=new ArrayList<>();
     if(!req.getParameter("id").equals("all")){
     for (Hotels hto: lh
@@ -65,7 +74,11 @@ List<Hotels> lh=hd.findHotelsByPricesPerNight(priceFrom,priceTo);
     else{
       hotels=lh;
     }
-    req.setAttribute("hot",hotels);
+    req.setAttribute("hot",hotels);}
+    catch (Exception e){
+      req.setAttribute("error","Error occure");
+    }
+    finally{
     req.getRequestDispatcher("hotelSearch.jsp").include(req, resp);
-  }
+  }}
 }

@@ -78,4 +78,13 @@
         <url-pattern>/bookings</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>MakeOrderServlet</servlet-name>
+        <servlet-class>com.softserve.tourcomp.controller.orderdetails.MakeOrderServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>MakeOrderServlet</servlet-name>
+        <url-pattern>/booking</url-pattern>
+    </servlet-mapping>
 </web-app>
