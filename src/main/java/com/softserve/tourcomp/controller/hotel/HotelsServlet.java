@@ -28,7 +28,7 @@ public class HotelsServlet extends HttpServlet {
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    if(req.getAttribute("hot")==null) {
+    if (req.getAttribute("hot") == null) {
       String rel = req.getParameter("id");
       if (rel.equals("all")) {
         hotels = hd.findAll();
@@ -42,30 +42,30 @@ public class HotelsServlet extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    Integer priceFrom=-1;
-    Integer priceTo=100000;
+    Integer priceFrom = -1;
+    Integer priceTo = 100000;
     //LocalDate start = LocalDate.of(Integer.parseInt(sD[0]),Integer.parseInt(sD[1]),Integer.parseInt(sD[2]));
     //LocalDate end = LocalDate.of(Integer.parseInt(eD[0]),Integer.parseInt(eD[1]),Integer.parseInt(eD[2]));
-if(req.getParameter("priceFrom")!=null){
-  priceFrom=Integer.parseInt(req.getParameter("priceFrom"));
-}
-    if(req.getParameter("priceTo")!=null){
-      priceTo=Integer.parseInt(req.getParameter("priceTo"));
+    if (req.getParameter("priceFrom") != null) {
+      priceFrom = Integer.parseInt(req.getParameter("priceFrom"));
     }
-List<Hotels> lh=hd.findHotelsByPricesPerNight(priceFrom,priceTo);
-    hotels=new ArrayList<>();
-    if(!req.getParameter("id").equals("all")){
-    for (Hotels hto: lh
-         ) {
-      if(hto.getCity().getCountry().getName().equals(req.getParameter("id"))){
-        hotels.add(hto);
-      }
+    if (req.getParameter("priceTo") != null) {
+      priceTo = Integer.parseInt(req.getParameter("priceTo"));
+    }
+    List<Hotels> lh = hd.findHotelsByPricesPerNight(priceFrom, priceTo);
+    hotels = new ArrayList<>();
+    if (!req.getParameter("id").equals("all")) {
+      for (Hotels hto : lh
+      ) {
+        if (hto.getCity().getCountry().getName().equals(req.getParameter("id"))) {
+          hotels.add(hto);
+        }
 
-    }}
-    else{
-      hotels=lh;
+      }
+    } else {
+      hotels = lh;
     }
-    req.setAttribute("hot",hotels);
+    req.setAttribute("hot", hotels);
     req.getRequestDispatcher("hotelSearch.jsp").include(req, resp);
   }
 }
