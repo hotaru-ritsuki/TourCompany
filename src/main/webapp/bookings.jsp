@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
-  User: oleksii
-  Date: 11.12.2019
-  Time: 11:49 пп
+  User: Anonym
+  Date: 12.12.2019
+  Time: 7:11
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -201,7 +201,7 @@
                         <li><a href="hotels?id=Ukraine">Ukraine</a></li>
                     </ul>
                 </li>
-                <li><a href="hotels?id=all">Hotel</a></li>
+                <li><a href="hotel?id=all">Hotel</a></li>
             </c:if>
             <c:if test="${!session.equals('true')}">
                 <li><a href="index?session=true">Home</a></li>
@@ -212,45 +212,21 @@
         </ul>
     </nav>
 </div>
-<div class="filter">
-    <form method="post">
-        <label for="inputDateStart">Date Start</label>
-        <input type="date" id="inputDateStart" class="form-control" name="dateStart" placeholder="Start">
-
-        <label for="inputDateEnd">Date Start</label>
-        <input type="date" id="inputDateEnd" class="form-control" name="dateEnd" placeholder="End">
-
-        <label for="inputPriceFrom">Price From</label>
-        <input type="number" id="inputPriceFrom" class="form-control" name="priceFrom" placeholder="From">
-
-        <label for="inputPriceTo">Price To</label>
-        <input type="number" id="inputPriceTo" class="form-control" name="priceTo" placeholder="To">
-        <button type="submit" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 create_trip_button">Search</button>
-    </form>
-    <div class="errorMessage">
-        <h3>${requestScope.get("error")}</h3>
-    </div>
-</div>
 <div>
     <div class="table-Hotel" style="overflow-x:auto;">
         <table>
             <thead>
             <tr>
-                <th>Photo</th>
-                <th>Hotel</th>
-                <th>City</th>
-                <th>Rooms</th>
+                <th>StartDate</th>
+                <th>EndDate</th>
                 <th>Price</th>
-                <th></th>
-                <c:forEach var="hotel" items="${hot}">
-            <tr href = "${pageContext.request.contextPath}/hotel?id=${hotel.id}">
-                <td><img src="${pageContext.request.contextPath}/images/${hotel.id}.png" alt="image" width="300"
-                         height="300"></td>
-                <td><a href="${pageContext.request.contextPath}/booking?hotelId=${hotel.id}">${hotel.name}</a></td>
-                <td>${hotel.city.name}</td>
-                <td>${hotel.numberRoom}</td>
-                <td>${hotel.priceNight} UAH</td>
-                <td>${hotel.discription}</td>
+                <th>Hotel</th>
+                <c:forEach var="book" items="${bookin}">
+            <tr>
+                <td>${book.startDate}</td>
+                <td>${book.endDate}</td>
+                <td>${book.price}</td>
+                <td>${book.hotel.name}</td>
             </tr>
             </c:forEach>
             </tr>
@@ -260,12 +236,14 @@
 
         </table>
 
-</div>
+    </div>
 
 
-<div class="footer">
-    <h5 style="text-align: center;padding: 0;margin: 0"> All rights reserved. &copy; 2019 by Hotaru_Ritsuki and AlexHack </h5>
-</div>
+    <div class="footer">
+        <h5 style="text-align: center;padding: 0;margin: 0"> All rights reserved. &copy; 2019 by Hotaru_Ritsuki and AlexHack </h5>
+    </div>
 </div>
 </body>
 </html>
+
+

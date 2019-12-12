@@ -68,4 +68,14 @@
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>BookingsService</servlet-name>
+        <servlet-class>com.softserve.tourcomp.controller.orderdetails.BookingsService</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>BookingsService</servlet-name>
+        <url-pattern>/bookings</url-pattern>
+    </servlet-mapping>
+
 </web-app>

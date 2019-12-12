@@ -116,7 +116,7 @@
                                     <label for="inputLastName">Last Name</label>
                                 </div>
                                 <div class="form-label-group">
-                                    <input  id="inputEmail" class="form-control trip__create_endDestination" name="email" placeholder="Email" required>
+                                    <input  id="inputEmail" type="email" class="form-control trip__create_endDestination" name="email" placeholder="Email" required>
                                     <label for="inputEmail">Email</label>
                                 </div>
                                 <div class="form-label-group">

@@ -185,6 +185,7 @@
                 <li><a href="index?session=true">Home</a></li>
                 <li><a href="profile?session=true">Cabinet</a></li>
                 <li><a href="logout">Logout</a></li>
+                <li><a href="bookings?session=true">Bookings</a></li>
                     <c:if test="${isAdmin.equals('true')}">
                         <li><a href="stats?id=all">Statistic</a>
                             <ul class="listG">
