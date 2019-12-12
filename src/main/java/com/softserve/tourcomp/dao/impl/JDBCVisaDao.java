@@ -18,7 +18,7 @@ public class JDBCVisaDao extends JDBCGenericDao<Visas> implements VisaDao {
   private final String selectUsersToVisaQuery = "SELECT * FROM USERS_VISAS JOIN USERS ON VISAS.id_user=USERS.id WHERE id_visa = ?";
   private final String findVisasByCountryIdQuery = "SELECT * FROM VISAS JOIN COUNTRYS ON id_visa = VISAS.id";
 private final String countOwnersOfVisa = "SELECT COUNT(*) FROM USERS_VISAS WHERE id_visa = ?";
-
+private final String findByName = "SELECT * FROM VISAS WHERE VISAS.name = ?";
   public JDBCVisaDao(Connection connection) {
     super(connection, "INSERT INTO VISAS (name) VALUES (?)",
           "SELECT * FROM VISAS WHERE id = ?",
@@ -172,6 +172,21 @@ private final String countOwnersOfVisa = "SELECT COUNT(*) FROM USERS_VISAS WHERE
     return Optional.ofNullable(entity);
   }
 
+  @Override
+  public Optional<Visas> findByName(String visaId) {
+    Visas entity = null;
+
+    try (PreparedStatement statement = connection.prepareStatement(findByName)) {
+      statement.setString(1, visaId);
+      ResultSet result = statement.executeQuery();
+      if (result.next()) {
+        entity = extractEntity(result);
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return Optional.ofNullable(entity);
+  }
   /**
    * @param visaId
    * @return

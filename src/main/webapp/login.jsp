@@ -125,7 +125,7 @@
                                         <h3>${requestScope.get("error")}</h3>
                                     </div>
                                 </form>
-                            <a href="${base}/registration"><button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 registratio">Registration</button></a>
+                            <a href="${base}/register"><button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 registratio">Registration</button></a>
                         </div>
                     </div>
                 </div>

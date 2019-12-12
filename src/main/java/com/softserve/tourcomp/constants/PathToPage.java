@@ -33,7 +33,7 @@ public class PathToPage {
     public final static String ORDER_DELETE = "/orderDelete";
 
     //Home
-    public static final String HOME_PATH = "/";
+    public static final String HOME_PATH = "/index";
 
     //Visa
     public static final String VISA_PATH = "/visa";

@@ -3,13 +3,14 @@ package com.softserve.tourcomp.controller.registration;
 import com.softserve.tourcomp.constants.PathToJsp;
 import com.softserve.tourcomp.dao.CountryDao;
 import com.softserve.tourcomp.dao.UserDao;
-import com.softserve.tourcomp.dao.impl.JDBCCountryDao;
 import com.softserve.tourcomp.dao.impl.JDBCDaoFactory;
 import com.softserve.tourcomp.entity.Users;
 import com.softserve.tourcomp.service.CountryService;
 import com.softserve.tourcomp.service.ServiceFactory;
 import com.softserve.tourcomp.service.UserService;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +40,7 @@ user.setLastName(request.getParameter("lastName"));
 user.setCountry(jc.findByCountryName(request.getParameter("country")).get());
 user.setIsAdmin(false);
 if(ud.create(user)){
-  request.getRequestDispatcher(PathToJsp.LOGIN_JSP).forward(request, response);
+  response.sendRedirect(request.getContextPath()+"/login");
 }
 else{
   throw new Exception();

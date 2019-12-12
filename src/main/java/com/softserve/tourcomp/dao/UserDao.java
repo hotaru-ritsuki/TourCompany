@@ -1,8 +1,10 @@
 package com.softserve.tourcomp.dao;
 
 import com.softserve.tourcomp.entity.Users;
+import com.softserve.tourcomp.entity.Visas;
 import com.softserve.tourcomp.entity.stats.UserStats;
 
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.List;
 
@@ -57,4 +59,20 @@ public interface UserDao extends GenericDao<Users>{
    * @return
    */
   List<UserStats> createStatistics();
+
+  /**
+   *
+   * @param userId
+   * @return
+   * @throws SQLException
+   */
+  List<Visas> getVisas(long userId) throws SQLException;
+
+  /**
+   *
+   * @param userId
+   * @param visa
+   * @throws SQLException
+   */
+  void insertVisa(Long userId,Visas visa) throws SQLException;
 }

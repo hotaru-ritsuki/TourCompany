@@ -125,13 +125,13 @@
                                 </div>
                                 <div class="form-label-group">
                                     Country: <select name="country">
-                                            <option>Poland</option>
+                                            <option>Unknown</option>
                                             <option>Ukraine</option>
                                             <option>Germany</option>
-                                            <option>Iceland</option>
+                                            <option>Poland</option>
                                         </select>
                                 </div>
-                                    <button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 create_trip_button">Registration</button>
+                                    <button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 create_trip_button" type="submit">Registration</button>
                                 <div class="errorMessage">
                                     <h3>${requestScope.get("error")}</h3>
                                 </div>

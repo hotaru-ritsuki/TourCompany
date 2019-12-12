@@ -317,6 +317,14 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
       }
     }
   }
+  @Override
+public void insertVisa(Long userId,Visas visa) throws SQLException{
+  try (PreparedStatement insertVisas = connection.prepareStatement(createVisasQuery)) {
+    insertVisas.setLong(1, userId);
+      insertVisas.setLong(2, visa.getId());
+      insertVisas.execute();
+    }
+  }
 
 
   /**
@@ -339,7 +347,8 @@ public class JDBCUserDao extends JDBCGenericDao<Users> implements UserDao {
    * @return
    * @throws SQLException
    */
-  private List<Visas> getVisas(long userId) throws SQLException {
+  @Override
+  public List<Visas> getVisas(long userId) throws SQLException {
     List<Visas> result = new ArrayList<>();
     try (PreparedStatement statement = connection.prepareStatement(FindVisasQuery)) {
       statement.setLong(1, userId);

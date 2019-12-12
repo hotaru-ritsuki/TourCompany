@@ -6,6 +6,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
     <title>User Page</title>
@@ -100,9 +102,12 @@
             font-size: 12px;
             color: #777;
         }
+
     </style>
+
 </head>
 <body>
+
 <div class="container-fluid">
     <div class="row no-gutter">
         <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
@@ -112,45 +117,72 @@
                     <div class="row">
                         <div class="col-md-9 col-lg-8 mx-auto">
                             <h3 class="login-heading mb-4">Welcome back!</h3>
-                            <form class="User_page">
+                            <form class="User_page" method="post">
                                 <div class="form-label-group">
-                                    <input id="Name" class="form-control"
-                                           placeholder="Name" readonly>
-                                    <label for="Name">First Name</label>
+                                    <input id="Name" name="Name" class="form-control"
+                                           placeholder="Name">
+                                    <label for="Name">${user.firstName}</label>
                                 </div>
                                 <div class="form-label-group">
-                                    <input id="LastName" class="form-control"
-                                           placeholder="LastName" readonly>
-                                    <label for="LastName">Last Name</label>
+                                    <input id="LastName" name="LastName" class="form-control"
+                                           placeholder="LastName">
+                                    <label for="LastName">${user.lastName}</label>
                                 </div>
                                 <div class="form-label-group">
                                     <input id="Email" class="form-control"
                                            placeholder="Email" readonly>
-                                    <label for="Email">Email</label>
+                                    <label for="Email">${user.email}</label>
                                 </div>
                                 <div class="form-label-group">
                                     <input id="Country" class="form-control"
                                            placeholder="Country" readonly>
-                                    <label for="Country">Country</label>
+                                    <label for="Country">${user.country.name}</label>
                                 </div>
                                 <div class="form-label-group">
                                     <table >
-                                        <thead>
+                                        <thead><th>Visa</th>
+                                        <th></th>
+                                        <c:if test = "${visas.equals('null')}">
+                                            <tr>
+                                                <td>YOU DON'T HAVE VISAS,DUDE!</td>
+                                            </tr>
+                                            </c:if>
+                                        <c:if test = "${!visas.equals('null')}">
+                                        <c:forEach var="visa" items="${visas}">
                                         <tr>
-                                            <th>Visa</th>
-                                            <th></th>
+                                            <td>${visa.name}</td>
                                         </tr>
-
+                                        </c:forEach>
+                                        </c:if>
                                         </thead>
+
                                         <tbody class="visa__table_body"></tbody>
 
                                     </table>
                                 </div>
+                                    <div class="form-label-group">
+                                        Add: <select name="inputVisa">
+                                        <option>Germany VISA</option>
+                                        <option>Belgium VISA</option>
+                                        <option>Canada VISA</option>
+                                        <option>Iceland VISA</option>
+                                        <option>Japan VISA</option>
+                                        <option>North Korea VISA</option>
+                                        <option>USA VISA</option>
+                                        <option> Poland VISA</option>
+                                        <option>Ukraine VISA</option>
 
-                                <button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 finish">
-                                    Finish
+                                            </select>
+                                    </div>
+
+                                <button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 finish" type="submit">
+                                    Accept
                                 </button>
+
                             </form>
+                            <button href="${pageContext.request.contextPath}/index" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 finish">
+                                Finish
+                            </button>
                         </div>
                     </div>
                 </div>

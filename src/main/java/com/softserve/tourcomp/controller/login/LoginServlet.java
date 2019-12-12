@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
-//@WebServlet({PathToPage.HOME_PATH,PathToPage.LOGIN_PATH})
+@WebServlet({PathToPage.LOGIN_PATH})
 public class LoginServlet extends HttpServlet {
 
     @Override
@@ -41,6 +41,7 @@ public class LoginServlet extends HttpServlet {
         }
 
         if (result) {
+            req.getSession().setAttribute("user",ur);
             req.getSession().setAttribute("usid", ur.getId());
             req.getSession().setAttribute("session", "true");
             if(ur.getIsAdmin()){
@@ -49,7 +50,7 @@ public class LoginServlet extends HttpServlet {
             else{
               req.getSession().setAttribute("isAdmin","false");
             }
-            resp.sendRedirect("index");
+            req.getRequestDispatcher("index.jsp").include(req, resp);
         }
     }
 }

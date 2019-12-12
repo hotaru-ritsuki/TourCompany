@@ -20,5 +20,12 @@ public interface VisaDao extends GenericDao<Visas> {
    * @param visaId
    * @return
    */
+  Optional<Visas> findByName(String visaId);
+
+  /**
+   *
+   * @param visaId
+   * @return
+   */
   int countOwnersOfVisa(Long visaId);
 }

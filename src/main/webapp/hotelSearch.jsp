@@ -6,6 +6,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <html>
 <head>
     <title>Hotels</title>
@@ -182,19 +184,20 @@
             <c:if test="${session.equals('true')}">
                 <li><a href="index?session=true">Home</a></li>
                 <li><a href="profile?session=true">Cabinet</a></li>
-                <li><a href="logout">"Logout"</a></li>
-                <c:if test="${isAdmin.equals('true')}">
+                <li><a href="logout">Logout</a></li>
+                <c:if test="${sessionScope.user.isAdmin.equals('true')}">
                     <li><a href="statistics">Statistics</a></li>
                 </c:if>
                 <li><a href="hotels?id=all">Country</a>
                     <ul class="listG">
                         <li><a href="hotels?id=Germany">Germany</a></li>
+                        <li><a href="hotels?id=Iceland">Iceland</a></li>
                         <li><a href="hotels?id=Poland">Poland</a></li>
                         <li><a href="hotels?id=Canada">Canada</a></li>
                         <li><a href="hotels?id=Japan">Japan</a></li>
                         <li><a href="hotels?id=North Korea">North Korea</a></li>
                         <li><a href="hotels?id=USA">USA</a></li>
-                        <li><a href="hotels?id=Greece">Greece</a></li>
+                        <li><a href="hotels?id=Belgium">Belgium</a></li>
                         <li><a href="hotels?id=Ukraine">Ukraine</a></li>
                     </ul>
                 </li>
@@ -210,14 +213,7 @@
     </nav>
 </div>
 <div class="filter">
-    <form>
-        Country: <select name="country">
-                <option>Poland</option>
-                <option>Ukraine</option>
-                <option>Germany</option>
-                <option>Iceland</option>
-            </select>
-
+    <form method="post">
         <label for="inputDateStart">Date Start</label>
         <input type="date" id="inputDateStart" class="form-control" name="dateStart" placeholder="Start">
 
@@ -238,12 +234,22 @@
             <thead>
             <tr>
                 <th>Photo</th>
-                <th>Name</th>
+                <th>Hotel</th>
                 <th>City</th>
+                <th>Rooms</th>
                 <th>Price</th>
-                <th>
-                     <button class="create_button">More info</button> </th>
-
+                <th></th>
+                <c:forEach var="hotel" items="${hot}">
+            <tr href = "${pageContext.request.contextPath}/hotel?id=${hotel.id}">
+                <td><img src="${pageContext.request.contextPath}/images/${hotel.id}.png" alt="image" width="300"
+                         height="300"></td>
+                <td><a href="${pageContext.request.contextPath}/hotel?id=${hotel.id}">${hotel.name}</a></td>
+                <td>${hotel.city.name}</td>
+                <td>${hotel.numberRoom}</td>
+                <td>${hotel.priceNight} UAH</td>
+                <td>${hotel.discription}</td>
+            </tr>
+            </c:forEach>
             </tr>
 
             </thead>
@@ -256,6 +262,7 @@
 
 <div class="footer">
     <h5 style="text-align: center;padding: 0;margin: 0"> All rights reserved. &copy; 2019 by Hotaru_Ritsuki and AlexHack </h5>
+</div>
 </div>
 </body>
 </html>

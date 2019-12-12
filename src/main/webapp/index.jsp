@@ -184,26 +184,33 @@
             <c:if test="${session.equals('true')}">
                 <li><a href="index?session=true">Home</a></li>
                 <li><a href="profile?session=true">Cabinet</a></li>
-                <li><a href="logout">"Logout"</a></li>
+                <li><a href="logout">Logout</a></li>
                     <c:if test="${isAdmin.equals('true')}">
-                <li><a href="statistics">Statistics</a></li>
+                        <li><a href="stats?id=all">Statistic</a>
+                            <ul class="listG">
+                                <li><a href="countrystats">Country/Visa</a></li>
+                                <li><a href="userstats">Users</a></li>
+                                <li><a href="hotelstats">Hotels</a></li>
+                            </ul>
+                        </li>
                     </c:if>
                 <li><a href="hotels?id=all">Country</a>
                     <ul class="listG">
                         <li><a href="hotels?id=Germany">Germany</a></li>
+                        <li><a href="hotels?id=Iceland">Iceland</a></li>
                         <li><a href="hotels?id=Poland">Poland</a></li>
                         <li><a href="hotels?id=Canada">Canada</a></li>
-                        <li><a href="hotels?id=Japan">Japan</a></li>
                         <li><a href="hotels?id=North Korea">North Korea</a></li>
                         <li><a href="hotels?id=USA">USA</a></li>
-                        <li><a href="hotels?id=Greece">Greece</a></li>
+                        <li><a href="hotels?id=Belgium">Belgium</a></li>
                         <li><a href="hotels?id=Ukraine">Ukraine</a></li>
-                </ul>
+                        <li><a href="hotels?id=Japan">Japan</a></li>
+                    </ul>
             </li>
-            <li><a href="hotel?id=all">Hotel</a></li>
+            <li><a href="hotels?id=all">Hotel</a></li>
             </c:if>
            <c:if test="${!session.equals('true')}">
-               <li><a href="index?session=true">Home</a></li>
+               <li><a href="index">Home</a></li>
                <li><a href="login">Sign in</a></li>
                <li><a href="register">Sign up</a></li>
            </c:if>
