@@ -1,5 +1,5 @@
 INSERT INTO USERS_VISAS (id_user,id_visa)
-VALUES (40,13);
+               VALUES (40,13);
 INSERT INTO USERS_VISAS (id_user,id_visa)
 VALUES (19,6);
 INSERT INTO USERS_VISAS (id_user,id_visa)
