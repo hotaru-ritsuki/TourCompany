@@ -180,9 +180,11 @@
                                 </button>
 
                             </form>
-                            <button href="${pageContext.request.contextPath}/index" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 finish">
+                            <a href="${pageContext.request.contextPath}/index">
+                            <button  class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2 finish">
                                 Finish
                             </button>
+                            </a>
                         </div>
                     </div>
                 </div>

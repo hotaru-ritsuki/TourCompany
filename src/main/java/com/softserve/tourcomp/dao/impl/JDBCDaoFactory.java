@@ -1,5 +1,6 @@
 package com.softserve.tourcomp.dao.impl;
 
+import com.softserve.tourcomp.constants.DataBaseP;
 import com.softserve.tourcomp.dao.DaoFactory;
 
 import java.sql.Connection;
@@ -10,9 +11,6 @@ import java.sql.DriverManager;
  */
 public class JDBCDaoFactory extends DaoFactory {
   private static Connection connection;
-  private static final String URL = "jdbc:mysql://localhost:3306/tourfirm?useSSL=false";
-  private static final String USER = "root";
-  private static final String PASSWORD = "Root1234";
 
   public JDBCDaoFactory() {
   }
@@ -72,7 +70,7 @@ public class JDBCDaoFactory extends DaoFactory {
         if (connection == null){
           try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-            connection = DriverManager.getConnection(URL,USER,PASSWORD);
+            connection = DriverManager.getConnection(DataBaseP.URL,DataBaseP.USER,DataBaseP.PASSWORD);
           } catch (Exception e) {
             e.printStackTrace();
           }
