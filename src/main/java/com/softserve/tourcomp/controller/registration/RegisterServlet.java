@@ -22,34 +22,34 @@ public class RegisterServlet extends HttpServlet {
   private CountryService cs;
   private CountryDao jc;
   private UserDao ud;
+
   @Override
   public void init() throws ServletException {
     us = ServiceFactory.getInstance().getUserService();
-    jc= JDBCDaoFactory.getInstance().createCountryDao();
-    ud=JDBCDaoFactory.getInstance().createUserDao();
+    jc = JDBCDaoFactory.getInstance().createCountryDao();
+    ud = JDBCDaoFactory.getInstance().createUserDao();
   }
 
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-Users user=new Users();
-try{
-  user.setId(228L);
-user.setEmail(request.getParameter("email"));
-user.setPassword(request.getParameter("password"));
-user.setFirstName(request.getParameter("firstName"));
-user.setLastName(request.getParameter("lastName"));
-user.setCountry(jc.findByCountryName(request.getParameter("country")).get());
-user.setIsAdmin(false);
-if(ud.create(user)){
-  response.sendRedirect(request.getContextPath()+"/login");
-}
-else{
-  throw new Exception();
-}
-}
-catch(Exception exp){
-  request.setAttribute("error", "Email is already used.\nPlease do not leave empty fields!");
-  request.getRequestDispatcher(PathToJsp.REGISTRATION_JSP).forward(request, response);
-    }}
+    Users user = new Users();
+    try {
+      user.setId(228L);
+      user.setEmail(request.getParameter("email"));
+      user.setPassword(request.getParameter("password"));
+      user.setFirstName(request.getParameter("firstName"));
+      user.setLastName(request.getParameter("lastName"));
+      user.setCountry(jc.findByCountryName(request.getParameter("country")).get());
+      user.setIsAdmin(false);
+      if (ud.create(user)) {
+        response.sendRedirect(request.getContextPath() + "/login");
+      } else {
+        throw new Exception();
+      }
+    } catch (Exception exp) {
+      request.setAttribute("error", "Email is already used.\nPlease do not leave empty fields!");
+      request.getRequestDispatcher(PathToJsp.REGISTRATION_JSP).forward(request, response);
+    }
+  }
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     request.getRequestDispatcher(PathToJsp.REGISTRATION_JSP).forward(request, response);

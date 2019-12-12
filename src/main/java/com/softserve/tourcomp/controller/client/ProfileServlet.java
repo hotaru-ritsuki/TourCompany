@@ -19,25 +19,24 @@ import java.util.List;
 
 public class ProfileServlet extends HttpServlet {
   VisaService vs = ServiceFactory.getInstance().getVisaService();
-  UserService us=ServiceFactory.getInstance().getUserService();
-  UserDao ud=JDBCDaoFactory.getInstance().createUserDao();
-  VisaDao vd=JDBCDaoFactory.getInstance().createVisaDao();
+  UserService us = ServiceFactory.getInstance().getUserService();
+  UserDao ud = JDBCDaoFactory.getInstance().createUserDao();
+  VisaDao vd = JDBCDaoFactory.getInstance().createVisaDao();
+
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-      try {
-       List<Visas> lv= ud.getVisas((Long)req.getSession().getAttribute("usid"));
-       if(lv.isEmpty()){
-         throw new Exception();
-       }
-       else{
-        req.setAttribute("visas",lv);
+    try {
+      List<Visas> lv = ud.getVisas((Long) req.getSession().getAttribute("usid"));
+      if (lv.isEmpty()) {
+        throw new Exception();
+      } else {
+        req.setAttribute("visas", lv);
       }
-      } catch (Exception e) {
-        req.setAttribute("visas","null");
-      }
-      finally {
-        req.setAttribute("user",req.getSession().getAttribute("user"));
-      }
+    } catch (Exception e) {
+      req.setAttribute("visas", "null");
+    } finally {
+      req.setAttribute("user", req.getSession().getAttribute("user"));
+    }
 
     req.getRequestDispatcher("userPage.jsp").include(req, resp);
   }
@@ -45,17 +44,18 @@ public class ProfileServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     Visas visar = vd.findByName(req.getParameter("inputVisa")).get();
-    Users user= ud.findById((Long)req.getSession().getAttribute("usid")).get();
+    Users user = ud.findById((Long) req.getSession().getAttribute("usid")).get();
     user.getVisas().add(visar);
-    if(req.getParameter("Name") !=null){
+    if (req.getParameter("Name") != null) {
       user.setFirstName(req.getParameter("Name"));
     }
-    if(req.getParameter("LastName") !=null){
+    if (req.getParameter("LastName") != null) {
       user.setLastName(req.getParameter("LastName"));
     }
     ud.update(user);
-    req.getSession().setAttribute("user",user);                                                                                        req.setAttribute("user",req.getSession().getAttribute("user"));
-    resp.sendRedirect(req.getContextPath()+"/profile");
-    }
+    req.getSession().setAttribute("user", user);
+    req.setAttribute("user", req.getSession().getAttribute("user"));
+    resp.sendRedirect(req.getContextPath() + "/profile");
   }
+}
 

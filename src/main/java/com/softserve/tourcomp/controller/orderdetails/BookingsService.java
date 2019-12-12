@@ -10,10 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class BookingsService extends HttpServlet {
-  BookingDao bd= JDBCDaoFactory.getInstance().createBookingDao();
+  BookingDao bd = JDBCDaoFactory.getInstance().createBookingDao();
+
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    req.setAttribute("bookin",bd.findBookingsByUserId((Long)req.getSession().getAttribute("usid")));
+    req.setAttribute("bookin", bd.findBookingsByUserId((Long) req.getSession().getAttribute("usid")));
     req.getRequestDispatcher("bookings.jsp").include(req, resp);
   }
 }
